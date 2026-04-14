@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where npx:*)",
+      "Bash(where python:*)",
+      "WebFetch(domain:aidefend.net)",
+      "Bash(curl -s -L \"https://aidefend.net\")",
+      "Bash(curl -s -L \"https://raw.githubusercontent.com/edward-playground/aidefense-framework/main/README.md\")",
+      "Bash(curl -s \"https://api.github.com/repos/edward-playground/aidefense-framework/contents/\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f'{d[\\\\\"name\\\\\"]:40s} {d[\\\\\"type\\\\\"]}'\\) for d in data]\")",
+      "Bash(curl -s \"https://api.github.com/repos/edward-playground/aidefense-framework/git/trees/main?recursive=1\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(d['path']\\) for d in data.get\\('tree',[]\\) if d['path'].endswith\\('.js'\\) or d['path'].endswith\\('.json'\\) or 'data' in d['path'].lower\\(\\) or 'technique' in d['path'].lower\\(\\)]\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/edward-playground/aidefense-framework/main/data/data.json\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/edward-playground/aidefense-framework/main/data/data.json\" -o /c/Users/edmbo/aidefend_data.json)",
+      "Read(//c/Users/edmbo/**)",
+      "Bash(python3 -c ':*)",
+      "Bash(curl -s https://raw.githubusercontent.com/edward-playground/aidefense-framework/main/data/data.json -o __TRACKED_VAR__/aidefend_data.json)",
+      "Bash(pip install:*)",
+      "Bash(python -c ':*)"
+    ]
+  }
+}

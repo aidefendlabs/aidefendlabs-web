@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aidefendlabs",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "3000", "-d", "C:/Users/edmbo/aidefend/aidefendlabs-web"],
+      "port": 3000
+    }
+  ]
+}
