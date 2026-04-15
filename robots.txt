@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://aidefendlabs.com/sitemap.xml
