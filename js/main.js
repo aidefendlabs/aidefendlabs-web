@@ -70,12 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const patternConfigs = [
       {
         nodes: patternA, edges: edgesA,
-        vx: 0.02, vy: 0.12, vw: 0.42, vh: 0.70,
+        vx: 0.05, vy: 0.12, vw: 0.38, vh: 0.65,
         color1: [59, 130, 246], color2: [6, 214, 160],
       },
       {
         nodes: patternB, edges: edgesB,
-        vx: 0.55, vy: 0.08, vw: 0.42, vh: 0.75,
+        vx: 0.55, vy: 0.10, vw: 0.38, vh: 0.70,
         color1: [139, 92, 246], color2: [6, 182, 212],
       },
     ];
