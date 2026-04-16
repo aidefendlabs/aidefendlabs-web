@@ -1,0 +1,25 @@
+{
+  "name": "AIDEFEND Labs",
+  "short_name": "AIDEFEND",
+  "description": "Open-source AI security framework: 280+ defensive techniques, 9+ threat frameworks mapped, 700+ implementation guidelines.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050a15",
+  "theme_color": "#050a15",
+  "orientation": "any",
+  "categories": ["security", "developer tools", "education"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "assets/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

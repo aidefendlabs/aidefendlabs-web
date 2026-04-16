@@ -6,7 +6,7 @@
 
   <!-- Primary SEO -->
   <title>AIDEFEND Labs | Democratizing AI Security Defenses</title>
-  <meta name="description" content="AIDEFEND Labs 提供開源 AI 安全防禦框架，涵蓋 280+ 防禦技術、9+ 威脅框架、700+ 實作指引。包含 Prompt Injection 防禦、RAG 安全、Agentic AI 安全等技術解決方案。">
+  <meta name="description" content="AIDEFEND Labs builds open-source AI security frameworks with 280+ defensive techniques, 9+ threat frameworks mapped, and 700+ implementation guidelines. Technical, code-level defenses — not governance checklists.">
   <meta name="keywords" content="AI security, AI 安全, AI 防禦, prompt injection defense, LLM security, AI security framework, AIDEFEND, agentic AI security, RAG poisoning defense, MCP security, AI red team, OWASP LLM Top 10, MITRE ATLAS, AI threat modeling">
   <meta name="author" content="AIDEFEND Labs, PBC">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -15,16 +15,25 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:site_name" content="AIDEFEND Labs">
   <meta property="og:title" content="AIDEFEND Labs | Democratizing AI Security Defenses">
-  <meta property="og:description" content="開源 AI 安全框架：280+ 防禦技術、9+ 威脅框架、700+ 實作指引。技術層級的 AI 防禦解決方案，不只是治理清單。">
+  <meta property="og:description" content="Open-source AI security framework: 280+ defensive techniques, 9+ threat frameworks mapped, 700+ implementation guidelines. Technical, code-level AI defenses — not governance checklists.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aidefendlabs.com/">
-  <meta property="og:locale" content="zh_TW">
-  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="zh_TW">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AIDEFEND Labs | Democratizing AI Security Defenses">
-  <meta name="twitter:description" content="開源 AI 安全框架：280+ 防禦技術、9+ 威脅框架、700+ 實作指引。技術層級的 AI 防禦，不只是治理清單。">
+  <meta name="twitter:description" content="Open-source AI security framework: 280+ defensive techniques, 9+ threat frameworks mapped, 700+ implementation guidelines. Technical, code-level AI defenses.">
+
+  <!-- Hreflang — bilingual signal for search engines -->
+  <link rel="alternate" hreflang="en" href="https://aidefendlabs.com/">
+  <link rel="alternate" hreflang="zh-Hant-TW" href="https://aidefendlabs.com/">
+  <link rel="alternate" hreflang="x-default" href="https://aidefendlabs.com/">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#050a15">
+  <meta name="msapplication-TileColor" content="#050a15">
 
   <!-- Structured Data - Organization -->
   <script type="application/ld+json">
@@ -51,14 +60,97 @@
   }
   </script>
 
-  <!-- Structured Data - WebSite (for search box) -->
+  <!-- Structured Data - WebSite -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "AIDEFEND Labs",
     "url": "https://aidefendlabs.com",
-    "description": "Technical AI security frameworks with 280+ defensive techniques, 9+ threat frameworks, and 700+ implementation guidelines."
+    "description": "Technical AI security frameworks with 280+ defensive techniques, 9+ threat frameworks, and 700+ implementation guidelines.",
+    "inLanguage": ["en", "zh-Hant-TW"]
+  }
+  </script>
+
+  <!-- Structured Data - FAQ (Hot Topics as rich results) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does AIDEFEND defend against Prompt Injection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AIDEFEND provides techniques including System Prompt Hardening (AID-H-017), Closed-Loop Prompt Injection Detector Hardening (AID-H-027), and Adversarial Input & Prompt Injection Detection (AID-D-001) with implementation guidance and code examples."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is Agentic AI Security and how does AIDEFEND address it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Autonomous AI agents introduce risks like unauthorized actions, goal drift, and privilege escalation. AIDEFEND covers Secure Agent Architecture (AID-H-018), Tool Authorization & Capability Scoping (AID-H-019), and Agent Autonomy & Authority Governance (AID-M-009)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does AIDEFEND protect against MCP and Tool Security threats?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Model Context Protocol expands the attack surface through tool poisoning, registry spoofing, and TOCTOU attacks. AIDEFEND provides Tool & MCP Resolution Integrity (AID-H-025), MCP & Tool Client Security Hardening (AID-H-029), and Tool-Call Sequence Anomaly Detection (AID-D-003.004)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What defenses does AIDEFEND offer against RAG Poisoning?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AIDEFEND addresses RAG pipeline attacks with RAG Index Hygiene & Signing (AID-H-021), RAG Content & Relevance Monitoring (AID-D-014), and Rapid Vector Index Rollback & Quarantine (AID-R-005) to protect retrieval-augmented generation systems."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does AIDEFEND handle Data Poisoning and AI Supply Chain threats?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AIDEFEND provides Dataset Supply Chain Validation (AID-H-003.003), External Media & Document Provenance Verification (AID-H-002.007), and Static Artifact Hash & Signature Verification (AID-D-004.001) to ensure training data and model artifact integrity."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the AIDEFEND Framework?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AIDEFEND is a free, open-source AI security framework with 280+ defensive techniques, 9+ threat frameworks mapped (MITRE ATLAS, OWASP, MAESTRO, NIST, and more), 700+ implementation guidelines, and 4 strategic views (Tactics, Pillars, Phases, Frameworks). Every technique includes code examples and architecture patterns."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does AIDEFEND address AI-Generated Code Safety?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AIDEFEND provides Unsafe Code Execution Prevention (AID-H-026), AI-Generated Code Admission Control & Safe Promotion (AID-H-032), and Pre-Execution Behavioral Analysis in Sandboxes (AID-I-001.005) to prevent vulnerable or malicious AI-generated code from reaching production."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What Multi-Agent and Swarm Security defenses does AIDEFEND provide?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AIDEFEND covers Inter-Agent Security & Consensus Monitoring (AID-D-011.002), Agent Population Drift & Rogue-Instance Escalation (AID-D-011.003), and Rogue Agent Discovery, Reputation & Quarantine (AID-D-016) to detect compromised agents before they cascade."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does AIDEFEND use AI Deception and Honeypots for defense?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AIDEFEND includes Honeypot AI Services & Decoy Models/APIs (AID-DV-001), Decoy Agent Behaviors & Canary Tasks (AID-DV-005), and Honey Data, Decoy Artifacts & Canary Tokens (AID-DV-002) to detect and study adversaries in real time."
+        }
+      }
+    ]
   }
   </script>
 
@@ -66,13 +158,23 @@
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/favicon.png">
 
-  <!-- Fonts -->
+  <!-- Performance: DNS prefetch & preconnect -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://aidefend.net">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Fonts (preload critical weight for faster LCP) -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- Styles -->
+  <!-- Styles (preload for faster render) -->
+  <link rel="preload" href="css/style.css" as="style">
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
