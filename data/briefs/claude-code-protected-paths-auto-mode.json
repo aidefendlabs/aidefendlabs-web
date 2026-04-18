@@ -1,0 +1,123 @@
+{
+  "slug": "claude-code-protected-paths-auto-mode",
+  "date": "2026-04-16",
+  "publishOrder": 0,
+  "source": {
+    "title": "Claude Code Just Broke Bypass Permissions. Here Is the Fix.",
+    "url": "https://www.roborhythms.com/claude-code-bypass-permissions-broken-2026/",
+    "type": "article",
+    "author": "Noah Albert",
+    "authoredAt": "2026-03-31"
+  },
+  "tags": [
+    "Agentic AI",
+    "Infrastructure",
+    "Defense"
+  ],
+  "en": {
+    "title": "Claude Code Protected Paths and Auto Mode: Why Bypass Is No Longer a Stable Control Boundary",
+    "summary": "A March 31, 2026 article shows how Claude Code 2.1.78+ introduced protected-path overrides and later classifier-based auto mode, turning permission handling into an agent-control problem rather than a classic exploit. The practical lesson is to treat Git state, agent configuration, and interface-specific approval behavior as protected control-plane surfaces.",
+    "threatAnalysis": "<ul><li><strong>The semantic change matters more than the headline.</strong> The risk is not a traditional bypass exploit; it is that a coding agent's effective authority changed while users still expected full unattended execution.</li><li><strong>Protected paths reveal the real control plane.</strong> Directories such as <code>.git/</code>, <code>.claude/</code>, and <code>.claude/skills/</code> should be treated as higher-trust assets because changing them can rewrite history, alter policy, or enable future self-modification.</li><li><strong>Interface drift becomes a security issue.</strong> If CLI, VS Code, desktop, and future wrappers enforce permissions differently, the same named mode no longer represents the same control boundary.</li><li><strong>Auto mode reduces friction but raises assurance requirements.</strong> A classifier-based approval layer may be operationally better than blanket bypass, but defenders now need evidence that it behaves safely under their real workflows.</li></ul>",
+    "defenses": [
+      {
+        "id": "AID-M-009.002",
+        "name": "Authority Envelope & Action Risk Classification",
+        "relevance": "Classify writes to <code>.git/</code>, <code>.claude/</code>, skill folders, CI definitions, and policy files as control-plane actions outside the routine coding envelope so they always trigger stricter handling.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-M-009.004",
+        "name": "Runtime Trust-State Demotion & Autonomy Narrowing",
+        "relevance": "If an agent pivots from normal code edits into protected-path writes or repeated approval-sensitive actions, demote it to restricted or read-only mode before the workflow keeps running.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-019.007",
+        "name": "Skill-Level Permission Manifest Validation & Runtime Enforcement",
+        "relevance": "Require installed skills and local automations to declare whether they can touch protected state, then deny undeclared writes to agent config, skill registries, or persistent identity files at runtime.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-022.001",
+        "name": "Client-Side Configuration Enforcement",
+        "relevance": "Block insecure permission settings, unsafe wrapper configs, and policy drift at the endpoint or pre-commit layer before a developer ever launches the agent in an over-permissive state.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-I-004.006",
+        "name": "Agent Identity & Persistent State File Write Protection",
+        "relevance": "Write-protect high-trust configuration and persistent state surfaces so an agent cannot silently modify the files that shape its future authority, memory, or identity.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-D-004.003",
+        "name": "Runtime Configuration & Policy Drift Detection and Monitoring",
+        "relevance": "Track when CLI, IDE, desktop, or runner behavior no longer matches the approved permission baseline so teams can catch interface-specific enforcement drift before unattended jobs break or overreach.",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "Interface-parity verification for agent permission controls",
+        "description": "Beyond the techniques mapped above, teams running Claude Code across multiple clients should also build dedicated interface-parity verification — confirming that CLI, IDE extensions, desktop apps, and remote runners enforce the same protected-path and approval semantics before any unattended rollout.",
+        "suggestion": "Add interface-parity regression tests that exercise representative file writes, shell calls, and protected-path mutations across every supported client before enabling auto mode or other low-touch execution paths."
+      }
+    ],
+    "whatDefendersShouldDoNow": "<ul><li>Treat <code>.git/</code>, <code>.claude/</code>, skill folders, CI definitions, and local agent policy files as protected control-plane assets, not ordinary project files.</li><li>Split approval tiers: routine code edits can run with lower friction, but protected-path writes, config changes, branch or history mutation, and skill installation should re-enter explicit approval.</li><li>Regression-test permission behavior across CLI, VS Code, desktop, and CI runners whenever the client or version changes; do not trust the mode name alone.</li><li>Add write-protection and drift alerts for agent config, Git metadata, and persistent state files so self-modification attempts surface immediately.</li><li>If you adopt auto or classifier-driven approval, benchmark false negatives and interruption patterns in your real workflows before treating it as a safe unattended control.</li></ul>",
+    "conclusion": "<p>This case is a useful reminder that agent permissions are part of the security control plane, not just a usability setting. AIDEFEND maps well here to authority scoping, runtime demotion, config enforcement, and persistent-state protection; teams adopting Claude Code at scale can extend that baseline with cross-interface permission verification.</p>"
+  },
+  "zh-TW": {
+    "title": "Claude Code 的 Protected Paths 與 Auto Mode：被繞過的控制邊界",
+    "summary": "2026 年 3 月 31 日的這篇文章指出，Claude Code 2.1.78 之後加入了受保護路徑（Protected Paths）的覆寫機制，後續又推出用分類器（classifier）判斷的自動模式（Auto Mode），權限處理不再是「找漏洞、鑽漏洞」的老問題，而是「agent 行為要怎麼管」的新問題。實務上的重點，是把 Git 狀態、agent 設定、還有不同介面的核准行為，都當成受保護的控制面資產來管。",
+    "threatAnalysis": "<ul><li><strong>重點不只是功能壞掉。</strong> 真正的風險不是傳統的繞過型漏洞利用，而是 coding agent 的實際權限已經改變，但使用者卻還以為它能穩穩地無人值守跑下去。</li><li><strong>受保護路徑其實就是真正的控制面。</strong> 像 <code>.git/</code>、<code>.claude/</code>、<code>.claude/skills/</code> 這些位置應該當成高機敏資產，因為改到它們就可能重寫歷史、改變政策，或讓 agent 在之後的執行中自我修改。</li><li><strong>介面差異本身就是資安問題。</strong> 即使是同一個 AI 工具（像 Claude Code），如果 CLI、VS Code、桌面版和未來其他封裝層的權限的執行方式不一致，那同一個模式名稱（像 Bypass Permissions、Auto Mode）就不再代表同一條控制邊界。</li><li><strong>自動模式減少了開發流程的阻力，但也拉高了驗證門檻。</strong> 用分類器做的核准機制，或許比全面繞過更合理，但防禦方現在必須拿出證據，證明它在自己實際的工作流程下真的安全。</li></ul>",
+    "defenses": [
+      {
+        "id": "AID-M-009.002",
+        "name": "Authority Envelope & Action Risk Classification",
+        "relevance": "把寫入 <code>.git/</code>、<code>.claude/</code>、skill 資料夾、CI 定義和政策檔案的動作，歸類為控制面操作，明確劃出這些動作不在一般程式撰寫的範圍內，每次都要走更嚴格的流程。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-M-009.004",
+        "name": "Runtime Trust-State Demotion & Autonomy Narrowing",
+        "relevance": "如果 agent 從一般的程式碼修改，轉向受保護路徑的寫入、或重複觸發需要核准的動作，就要立刻把它降級到受限或唯讀模式，而不是讓流程繼續全權跑下去。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-019.007",
+        "name": "Skill-Level Permission Manifest Validation & Runtime Enforcement",
+        "relevance": "要求 skill 和本地自動化明確宣告自己能不能碰受保護的狀態，並在執行期擋掉所有沒宣告過的寫入，包括 agent 設定、skill 登錄檔、或持久身分檔案。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-022.001",
+        "name": "Client-Side Configuration Enforcement",
+        "relevance": "在用戶端或 pre-commit 層先擋掉不安全的權限設定、有風險的封裝層設定、還有政策偏移，避免開發者在權限過度寬鬆的狀態下就把 agent 跑起來。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-I-004.006",
+        "name": "Agent Identity & Persistent State File Write Protection",
+        "relevance": "對高機敏的設定檔和持久狀態檔案（像 agent 記憶檔、身分憑證、skill 登錄檔）加上寫入保護，避免 agent 偷偷動到會影響未來權限、記憶、或身分的檔案。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-D-004.003",
+        "name": "Runtime Configuration & Policy Drift Detection and Monitoring",
+        "relevance": "持續監控 CLI、IDE、桌面版或執行器的行為，看看還符不符合當初核准過的權限基準，讓團隊早一步抓到特定介面的執行偏移，避免無人值守的工作出錯或越權。",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "跨介面權限控制的一致性驗證",
+        "description": "除了上面對應的防禦技術，在多種用戶端上使用 Claude Code 的團隊還可以再加一層跨介面一致性驗證：在啟動任何無人值守流程之前，先確認 CLI、IDE 擴充功能、桌面版、還有遠端執行器，跑的都是同一套受保護路徑和核准規則。",
+        "suggestion": "補上一套跨介面一致性迴歸測試：對每個支援的用戶端，都實際測試代表性的檔案寫入、shell 呼叫、受保護路徑異動，再決定要不要放行自動模式或其他阻力較小的執行路徑。"
+      }
+    ],
+    "whatDefendersShouldDoNow": "<ul><li>把 <code>.git/</code>、<code>.claude/</code>、skill 資料夾、CI 定義和本地 agent 政策檔案都當成受保護的控制面資產，不要當成一般專案檔案看待。</li><li>權限核准不能一視同仁：一般程式碼修改可以低阻力地跑，但受保護路徑寫入、設定變更、分支或歷史異動、skill 安裝，都要重新走一次明確核准。</li><li>每次用戶端或版本變動，就回歸測試一次 CLI、VS Code、桌面版、還有 CI 執行器的權限行為，不要只相信模式名稱。</li><li>對 agent 設定、Git 中繼資料、和持久狀態檔案（像 agent 記憶、身分憑證、skill 登錄檔）加上寫入保護和偏移警示，讓 agent 想偷偷改自己（權限、記憶、身分）的嘗試能馬上浮出來。</li><li>如果你要用自動模式或分類器做的核准機制，先用實際工作流程測出偽陰性和中斷狀況，確認沒問題後，再把它當成安全的無人值守機制來用。</li></ul>",
+    "conclusion": "<p>這個案例再次提醒我們：agent 權限是安全控制面的一部分，不只是 UX 設定。AIDEFEND 在權限範圍劃分、執行期降級、設定的落實、還有持久狀態保護這幾塊，都已經給出實用的對應；大規模採用 Claude Code 的團隊，可以在這個基礎上再加一層跨介面的權限驗證。</p>"
+  },
+  "defensesCount": 6,
+  "gapsCount": 1
+}

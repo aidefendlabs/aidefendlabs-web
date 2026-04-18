@@ -7,11 +7,13 @@ const translations = {
   en: {
     // Nav
     'nav.framework': 'Framework',
+    'nav.aia': 'AIDEFEND in Action',
     'nav.mission': 'Mission',
     'nav.whats-next': "What's Next",
     'nav.explore': 'Explore AIDEFEND',
 
     // Hero
+    'hero.tagline': 'Democratizing AI Security through Usable Knowledge and Intelligence',
     'hero.title.line1': 'Democratizing',
     'hero.title.line2': 'AI Security Defenses',
     'hero.subtitle': 'We build <strong class="text-gradient">technical, code-level, no-BS</strong> AI defensive frameworks and tools &mdash; not governance checklists &mdash; that give security teams and developers the concrete countermeasures they need to protect AI systems from real-world threats.',
@@ -95,6 +97,11 @@ const translations = {
     'frameworks.title': 'Mapped to Industry-Leading Threat Frameworks',
     'frameworks.subtitle': 'Every defensive technique is explicitly mapped to known threats from the most critical AI security frameworks.',
 
+    // CTA banner
+    'cta.aia.title': 'See AIDEFEND in Action',
+    'cta.aia.desc': 'Real-world AI threat analyses mapped to practical defenses',
+    'cta.aia.btn': 'View Analyses',
+
     // Mission
     'mission.label': 'Our Mission',
     'mission.title': 'AI Security Should Be <span class="text-gradient">Accessible to All</span>',
@@ -116,6 +123,59 @@ const translations = {
     'roadmap.community': 'Community Platform',
     'roadmap.stay': 'Stay connected &mdash; more announcements coming soon.',
 
+    // AIA listing page
+    'aia.label': 'AIDEFEND in Action',
+    'aia.title': 'Real-World AI Threats,<br>Mapped to <span class="text-gradient">Practical Defenses</span>',
+    'aia.subtitle': "We analyze real-world AI threats, vulnerabilities, and research &mdash; then show exactly how AIDEFEND's defensive techniques apply.",
+    'aia.search': 'Search threats, techniques, frameworks...',
+    'aia.clear-search': 'Clear search',
+    'aia.all-months': 'All',
+    'aia.newest': 'Newest First',
+    'aia.oldest': 'Oldest First',
+    'aia.defenses': 'defenses',
+    'aia.gaps': 'considerations',
+    'aia.read': 'Read Analysis',
+    'aia.no-results': 'No matching analyses found',
+    'aia.coming-soon': 'Coming soon &mdash; our first analysis is on the way',
+    'aia.total-briefs': 'analyses published',
+    'aia.total-defenses': 'total defenses mapped',
+    'aia.loading': 'Loading analyses...',
+
+    // Brief detail page
+    'brief.back': 'Back to all analyses',
+    'brief.threat': 'Threat Analysis',
+    'brief.defenses-title': 'AIDEFEND Defenses',
+    'brief.defenses-count': 'Applicable AIDEFEND Defenses ({n})',
+    'brief.gaps-title': 'Other Defensive Considerations',
+    'brief.gaps-none': 'No additional considerations identified',
+    'brief.gaps-count': 'additional considerations',
+    'brief.do-now': 'What Defenders Should Do Now',
+    'brief.conclusion': 'Conclusion',
+    'brief.source': 'Source',
+    'brief.published': 'Published',
+    'brief.originally-published': 'Original article',
+    'brief.by': 'By',
+    'brief.defense-count-short': 'applicable AIDEFEND defenses',
+    'brief.gap-count-short': 'additional considerations',
+    'brief.gap-suggestion': 'Recommendation',
+    'brief.invalid': 'This analysis could not be loaded.',
+    'brief.effectiveness.high': 'High',
+    'brief.effectiveness.medium': 'Medium',
+    'brief.effectiveness.partial': 'Partial',
+    'brief.view-technique': 'View in AIDEFEND →',
+    'brief.toolbar-label': 'Page actions',
+    'brief.copy-url': 'Copy URL',
+    'brief.copy-url-aria': 'Copy this page URL to clipboard',
+    'brief.copied': 'Copied!',
+    'brief.copy-failed': 'Copy failed',
+    'brief.print': 'Print',
+    'brief.print-aria': 'Print this page',
+    'brief.nav.label': 'More analyses',
+    'brief.nav.newer': 'Newer',
+    'brief.nav.older': 'Older',
+    'brief.nav.newer-aria': 'Go to the next newer analysis',
+    'brief.nav.older-aria': 'Go to the next older analysis',
+
     // Footer
     'footer.pbc': 'Public Benefit Corporation',
     'footer.framework': 'Framework',
@@ -129,11 +189,13 @@ const translations = {
   'zh-TW': {
     // Nav
     'nav.framework': '框架',
+    'nav.aia': 'AIDEFEND in Action',
     'nav.mission': '關於我們',
     'nav.whats-next': '接下來',
     'nav.explore': '探索 AIDEFEND',
 
     // Hero
+    'hero.tagline': 'Democratizing AI Security through Usable Knowledge and Intelligence',
     'hero.title.line1': '讓每個人都能做好',
     'hero.title.line2': 'AI 資安防禦',
     'hero.subtitle': '我們做的是<strong class="text-gradient">技術面、能夠實作和執行、講重點的</strong> AI 資安防禦框架跟工具 &mdash; 不是虛無飄渺高高在上的合規清單 &mdash; 讓資安團隊和開發者拿到能直接用的防禦手段，真正擋住 AI 系統的資安威脅。',
@@ -183,7 +245,7 @@ const translations = {
     'topics.memory.title': 'AI 記憶與狀態安全',
     'topics.memory.desc': 'Agent 的持久化記憶是新的攻擊面。被汙染的記憶可以在初始入侵後持續影響 Agent 的行為。',
 
-    // Technique names - 保留英文技術名稱，更易辨識
+    // Technique names
     'tech.AID-H-017': 'System Prompt 強化',
     'tech.AID-H-027': '閉環 Prompt Injection 偵測器強化',
     'tech.AID-D-001': '對抗性輸入與 Prompt Injection 偵測',
@@ -217,6 +279,11 @@ const translations = {
     'frameworks.title': '對應業界主流威脅框架',
     'frameworks.subtitle': '每個防禦技術都明確對應到主流 AI 資安框架裡的已知威脅。',
 
+    // CTA banner
+    'cta.aia.title': '看 AIDEFEND in Action',
+    'cta.aia.desc': '真實世界的 AI 威脅分析，對應到實務防禦措施',
+    'cta.aia.btn': '查看分析',
+
     // Mission
     'mission.label': '關於我們',
     'mission.title': 'AI 資安<span class="text-gradient">不該只有大公司才做得到</span>',
@@ -238,6 +305,59 @@ const translations = {
     'roadmap.community': '社群平台',
     'roadmap.stay': '持續關注 &mdash; 更多消息即將公布。',
 
+    // AIA listing page
+    'aia.label': 'AIDEFEND in Action',
+    'aia.title': '真實世界的 AI 威脅，<br>對應到<span class="text-gradient">實務防禦措施</span>',
+    'aia.subtitle': '我們分析真實世界的 AI 威脅、漏洞與研究，精確展示 AIDEFEND 防禦技術如何對應保護。',
+    'aia.search': '搜尋威脅、技術、框架...',
+    'aia.clear-search': '清除搜尋',
+    'aia.all-months': '全部',
+    'aia.newest': '最新優先',
+    'aia.oldest': '最舊優先',
+    'aia.defenses': '個防禦',
+    'aia.gaps': '個額外考量',
+    'aia.read': '閱讀分析',
+    'aia.no-results': '找不到相符的分析',
+    'aia.coming-soon': '即將推出 &mdash; 第一篇分析正在路上',
+    'aia.total-briefs': '篇分析已發布',
+    'aia.total-defenses': '個防禦技術已對應',
+    'aia.loading': '正在載入分析...',
+
+    // Brief detail page
+    'brief.back': '返回所有分析',
+    'brief.threat': '威脅分析',
+    'brief.defenses-title': 'AIDEFEND 防禦措施',
+    'brief.defenses-count': '適用的 {n} 項 AIDEFEND 防禦手法',
+    'brief.gaps-title': '其他防禦考量',
+    'brief.gaps-none': '尚無額外建議',
+    'brief.gaps-count': '個額外的防禦考量',
+    'brief.do-now': '身為資安防禦者，我們應該這麼做',
+    'brief.conclusion': '結論',
+    'brief.source': '來源',
+    'brief.published': '發布於 AIA',
+    'brief.originally-published': '原文發布',
+    'brief.by': '作者',
+    'brief.defense-count-short': '項對應的 AIDEFEND 防禦手法',
+    'brief.gap-count-short': '個額外考量',
+    'brief.gap-suggestion': '建議做法',
+    'brief.invalid': '這篇分析無法載入。',
+    'brief.effectiveness.high': '高',
+    'brief.effectiveness.medium': '中',
+    'brief.effectiveness.partial': '部分',
+    'brief.view-technique': '在 AIDEFEND 中查看 →',
+    'brief.toolbar-label': '頁面操作',
+    'brief.copy-url': '複製網址',
+    'brief.copy-url-aria': '複製這個頁面的網址',
+    'brief.copied': '已複製！',
+    'brief.copy-failed': '複製失敗',
+    'brief.print': '列印',
+    'brief.print-aria': '列印這個頁面',
+    'brief.nav.label': '其他分析',
+    'brief.nav.newer': '較新的一篇',
+    'brief.nav.older': '較舊的一篇',
+    'brief.nav.newer-aria': '前往較新的一篇分析',
+    'brief.nav.older-aria': '前往較舊的一篇分析',
+
     // Footer
     'footer.pbc': '公益公司',
     'footer.framework': '框架',
@@ -256,23 +376,44 @@ const translations = {
     return localStorage.getItem(STORAGE_KEY) || 'en';
   }
 
-  function setLang(lang) {
-    localStorage.setItem(STORAGE_KEY, lang);
-    applyTranslations(lang);
-    updateToggleButton(lang);
-    document.documentElement.lang = lang === 'zh-TW' ? 'zh-TW' : 'en';
+  function translateAttributes(lang) {
+    const t = translations[lang];
+    if (!t) return;
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (t[key] !== undefined) {
+        el.setAttribute('placeholder', t[key].replace(/<[^>]*>/g, ''));
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-aria-label');
+      if (t[key] !== undefined) {
+        el.setAttribute('aria-label', t[key].replace(/<[^>]*>/g, ''));
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-title');
+      if (t[key] !== undefined) {
+        el.setAttribute('title', t[key].replace(/<[^>]*>/g, ''));
+      }
+    });
   }
 
   function applyTranslations(lang) {
     const t = translations[lang];
     if (!t) return;
 
-    document.querySelectorAll('[data-i18n]').forEach(el => {
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
       if (t[key] !== undefined) {
         el.innerHTML = t[key];
       }
     });
+
+    translateAttributes(lang);
   }
 
   function updateToggleButton(lang) {
@@ -283,6 +424,14 @@ const translations = {
       labelEl.textContent = lang === 'en' ? '中文' : 'EN';
     }
     btn.setAttribute('aria-label', lang === 'en' ? 'Switch to Chinese' : 'Switch to English');
+  }
+
+  function setLang(lang) {
+    localStorage.setItem(STORAGE_KEY, lang);
+    applyTranslations(lang);
+    updateToggleButton(lang);
+    document.documentElement.lang = lang === 'zh-TW' ? 'zh-TW' : 'en';
+    document.dispatchEvent(new CustomEvent('aidefend:langchange', { detail: { lang } }));
   }
 
   function createToggleButton() {
@@ -312,12 +461,10 @@ const translations = {
   }
 
   function init() {
-    // Insert toggle button into nav-inner (outside nav-links so it's always visible)
     const navInner = document.querySelector('.nav-inner');
     const navToggle = document.querySelector('.nav-toggle');
-    if (navInner) {
+    if (navInner && !document.getElementById('lang-toggle')) {
       const btn = createToggleButton();
-      // Insert before the hamburger toggle (or at the end if no toggle)
       if (navToggle) {
         navInner.insertBefore(btn, navToggle);
       } else {
@@ -325,14 +472,22 @@ const translations = {
       }
     }
 
-    // Apply saved language
     const lang = getCurrentLang();
     if (lang !== 'en') {
       applyTranslations(lang);
       document.documentElement.lang = 'zh-TW';
+    } else {
+      translateAttributes('en');
     }
     updateToggleButton(lang);
   }
+
+  window.AIDEFEND_I18N = {
+    translations,
+    getCurrentLang,
+    setLang,
+    applyTranslations,
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

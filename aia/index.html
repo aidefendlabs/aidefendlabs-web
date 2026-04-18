@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AIDEFEND in Action | Real-World AI Threat Analysis</title>
+  <meta name="description" content="Real-world AI threat analyses mapped to practical AIDEFEND defenses, including clear coverage gaps and immediate steps defenders should take now.">
+  <meta name="author" content="AIDEFEND Labs, PBC">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://aidefendlabs.com/aia/">
+
+  <meta property="og:site_name" content="AIDEFEND Labs">
+  <meta property="og:title" content="AIDEFEND in Action | Real-World AI Threat Analysis">
+  <meta property="og:description" content="Real-world AI threat analyses mapped to practical defenses, coverage gaps, and concrete next steps for defenders.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aidefendlabs.com/aia/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="zh_TW">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AIDEFEND in Action | Real-World AI Threat Analysis">
+  <meta name="twitter:description" content="Real-world AI threat analyses mapped to practical defenses, coverage gaps, and concrete next steps for defenders.">
+
+  <link rel="alternate" hreflang="en" href="https://aidefendlabs.com/aia/">
+  <link rel="alternate" hreflang="zh-Hant-TW" href="https://aidefendlabs.com/aia/">
+  <link rel="alternate" hreflang="x-default" href="https://aidefendlabs.com/aia/">
+
+  <meta name="theme-color" content="#050a15">
+  <meta name="msapplication-TileColor" content="#050a15">
+
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/favicon.png">
+
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://aidefend.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/aia.css">
+</head>
+<body class="aia-page">
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo" aria-label="AIDEFEND Labs Home">
+        <div class="nav-logo-icon">AID</div>
+        AIDEFEND Labs
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links">
+        <li><a href="../index.html#framework" data-i18n="nav.framework">Framework</a></li>
+        <li><a href="./" class="active" data-i18n="nav.aia">AIDEFEND in Action</a></li>
+        <li><a href="../index.html#mission" data-i18n="nav.mission">Mission</a></li>
+        <li><a href="../index.html#roadmap" data-i18n="nav.whats-next">What's Next</a></li>
+        <li>
+          <a href="https://aidefend.net" target="_blank" rel="noopener" class="btn btn-primary nav-cta">
+            <span data-i18n="nav.explore">Explore AIDEFEND</span>
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 14.78a.75.75 0 0 0 1.06 0l7.22-7.22v5.69a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0 0 1.5h5.69l-7.22 7.22a.75.75 0 0 0 0 1.06z" clip-rule="evenodd"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===================== FULL-PAGE PARTICLE CANVAS ===================== -->
+  <canvas id="hero-canvas"></canvas>
+
+  <main class="aia-page-main">
+    <section class="aia-hero">
+      <div class="container">
+        <div class="aia-hero-copy">
+          <span class="section-label reveal" data-i18n="aia.label">AIDEFEND in Action</span>
+          <h1 class="aia-hero-title reveal reveal-delay-1" data-i18n="aia.title">Real-World AI Threats,<br>Mapped to <span class="text-gradient">Practical Defenses</span></h1>
+          <p class="aia-hero-subtitle reveal reveal-delay-2" data-i18n="aia.subtitle">We analyze real-world AI threats, vulnerabilities, and research &mdash; then show exactly how AIDEFEND's defensive techniques apply. Including what we can't yet cover.</p>
+
+          <div class="stats-row aia-hero-stats reveal reveal-delay-3">
+            <div class="stat-item">
+              <div class="aia-stat-number" id="aia-total-briefs">0</div>
+              <div class="stat-label" data-i18n="aia.total-briefs">analyses published</div>
+            </div>
+            <div class="stat-item">
+              <div class="aia-stat-number" id="aia-total-defenses">0</div>
+              <div class="stat-label" data-i18n="aia.total-defenses">total defenses mapped</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="aia-controls" aria-label="Analysis filters">
+      <div class="container">
+        <div class="aia-controls-inner">
+          <div class="aia-search">
+            <input id="aia-search" class="aia-search-input" type="search" data-i18n-placeholder="aia.search" placeholder="Search threats, techniques, frameworks..." autocomplete="off">
+            <button id="aia-search-clear" class="aia-search-clear" type="button" data-i18n-aria-label="aia.clear-search" aria-label="Clear search" hidden>&times;</button>
+          </div>
+
+          <div class="aia-select-wrap">
+            <select id="aia-month" class="aia-month-select" aria-label="Filter by month"></select>
+          </div>
+
+          <button id="aia-sort" class="aia-sort-button" type="button" data-i18n-title="aia.newest" title="Newest First" aria-label="Toggle sort order">
+            <span class="aia-sort-icon" aria-hidden="true">&#8595;</span>
+            <span class="aia-visually-hidden">Toggle sort order</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="aia-section">
+      <div class="container">
+        <div id="aia-loading" class="aia-loading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m16.24 16.24 2.83 2.83"/><path d="M12 18v4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M2 12h4"/><path d="m4.93 4.93 2.83 2.83"/></svg>
+          <p data-i18n="aia.loading">Loading analyses...</p>
+        </div>
+        <div id="aia-grid" class="aia-grid" hidden></div>
+        <div id="aia-empty" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="nav-logo-icon" style="width: 30px; height: 30px; font-size: 0.55rem; border-radius: 8px;">AID</div>
+          <div>
+            <div class="footer-brand-name">AIDEFEND Labs</div>
+            <span class="footer-brand-type" data-i18n="footer.pbc">Public Benefit Corporation</span>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="https://aidefend.net" target="_blank" rel="noopener" data-i18n="footer.framework">Framework</a>
+          <a href="https://github.com/edward-playground/aidefend-mcp" target="_blank" rel="noopener" data-i18n="footer.mcp">MCP Service</a>
+          <a href="https://github.com/edward-playground/aidefense-framework" target="_blank" rel="noopener" data-i18n="footer.github">GitHub</a>
+          <a href="https://www.linkedin.com/in/go-edwardlee/" target="_blank" rel="noopener" data-i18n="footer.linkedin">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; <span id="current-year">2026</span> AIDEFEND Labs, PBC. <span data-i18n="footer.rights">All rights reserved.</span></div>
+        <div class="footer-mission" data-i18n="footer.mission">Democratizing AI security defenses for organizations, developers, and the broader public.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/purify.min.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/main.js"></script>
+  <script type="module">
+    const i18n = window.AIDEFEND_I18N;
+    const state = {
+      query: '',
+      month: 'all',
+      newestFirst: true,
+      briefs: [],
+    };
+
+    const els = {
+      search: document.getElementById('aia-search'),
+      clear: document.getElementById('aia-search-clear'),
+      month: document.getElementById('aia-month'),
+      sort: document.getElementById('aia-sort'),
+      sortIcon: document.querySelector('.aia-sort-icon'),
+      totalBriefs: document.getElementById('aia-total-briefs'),
+      totalDefenses: document.getElementById('aia-total-defenses'),
+      loading: document.getElementById('aia-loading'),
+      grid: document.getElementById('aia-grid'),
+      empty: document.getElementById('aia-empty'),
+    };
+
+    function t(key) {
+      const lang = i18n.getCurrentLang();
+      return (i18n.translations[lang] && i18n.translations[lang][key]) || i18n.translations.en[key] || key;
+    }
+
+    function sanitizeHtml(value) {
+      return window.DOMPurify.sanitize(String(value || ''));
+    }
+
+    function sanitizeText(value) {
+      return window.DOMPurify.sanitize(String(value || ''), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+    }
+
+    function tagClass(tag) {
+      const groups = {
+        red: ['Prompt Injection', 'Jailbreak'],
+        purple: ['Model Theft', 'Model Poisoning'],
+        cyan: ['Infrastructure', 'MCP Security'],
+        green: ['Defense', 'Detection'],
+        amber: ['Supply Chain', 'Data Poisoning'],
+        blue: ['General', 'LLM Safety', 'RAG', 'Agentic AI'],
+      };
+      const match = Object.keys(groups).find((name) => groups[name].includes(tag));
+      return `aia-tag ${match ? `aia-tag-${match}` : 'aia-tag-blue'}`;
+    }
+
+    function formatDate(dateString) {
+      const lang = i18n.getCurrentLang();
+      return new Intl.DateTimeFormat(lang === 'zh-TW' ? 'zh-TW' : 'en-US', {
+        year: 'numeric',
+        month: lang === 'zh-TW' ? 'long' : 'short',
+        day: 'numeric',
+        timeZone: 'UTC',
+      }).format(new Date(`${dateString}T00:00:00Z`));
+    }
+
+    function formatMonthLabel(monthKey) {
+      const lang = i18n.getCurrentLang();
+      return new Intl.DateTimeFormat(lang === 'zh-TW' ? 'zh-TW' : 'en-US', {
+        year: 'numeric',
+        month: 'long',
+        timeZone: 'UTC',
+      }).format(new Date(`${monthKey}-01T00:00:00Z`));
+    }
+
+    function monthKey(dateString) {
+      return dateString.slice(0, 7);
+    }
+
+    function animateNumber(element, target) {
+      const duration = 900;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        element.textContent = String(Math.round(target * eased));
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function setupReveal(elements) {
+      if (!elements.length) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+      elements.forEach((element) => observer.observe(element));
+    }
+
+    function renderMonthOptions() {
+      const options = ['all', ...Array.from(new Set(state.briefs.map((brief) => monthKey(brief.date)))).sort().reverse()];
+      const selected = state.month;
+      els.month.innerHTML = options.map((value) => {
+        const label = value === 'all' ? sanitizeText(t('aia.all-months')) : sanitizeText(formatMonthLabel(value));
+        const isSelected = value === selected ? ' selected' : '';
+        return `<option value="${sanitizeText(value)}"${isSelected}>${label}</option>`;
+      }).join('');
+    }
+
+    function updateControls() {
+      els.clear.hidden = state.query.length === 0;
+      const sortKey = state.newestFirst ? 'aia.newest' : 'aia.oldest';
+      els.sort.title = sanitizeText(t(sortKey));
+      els.sort.setAttribute('aria-label', sanitizeText(t(sortKey)));
+      els.sortIcon.textContent = state.newestFirst ? '\u2193' : '\u2191';
+      renderMonthOptions();
+    }
+
+    function filterBriefs() {
+      const query = state.query.trim().toLowerCase();
+      return state.briefs
+        .filter((brief) => state.month === 'all' || monthKey(brief.date) === state.month)
+        .filter((brief) => {
+          if (!query) return true;
+          const haystack = [
+            brief.en && brief.en.title,
+            brief.en && brief.en.summary,
+            brief['zh-TW'] && brief['zh-TW'].title,
+            brief['zh-TW'] && brief['zh-TW'].summary,
+            ...(brief.tags || []),
+          ].join(' ').toLowerCase();
+          return haystack.includes(query);
+        })
+        .sort((a, b) => state.newestFirst ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date));
+    }
+
+    function renderEmpty(type) {
+      const isComingSoon = type === 'coming-soon';
+      const message = isComingSoon ? t('aia.coming-soon') : t('aia.no-results');
+      const cardClass = isComingSoon ? 'aia-empty aia-empty--coming glow-card' : 'aia-empty glow-card';
+      const icon = isComingSoon
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5.55 3.84 10.74 8 11 4.16-.26 8-5.45 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>';
+      els.grid.hidden = true;
+      els.empty.hidden = false;
+      els.empty.innerHTML = `<div class="${cardClass}">${icon}<p>${sanitizeHtml(message)}</p></div>`;
+    }
+
+    function renderGrid() {
+      const lang = i18n.getCurrentLang();
+      const filtered = filterBriefs();
+
+      if (state.briefs.length === 0) {
+        renderEmpty('coming-soon');
+        return;
+      }
+
+      if (filtered.length === 0) {
+        renderEmpty('no-results');
+        return;
+      }
+
+      els.empty.hidden = true;
+      els.grid.hidden = false;
+      els.grid.innerHTML = filtered.map((brief, index) => {
+        const localeData = brief[lang] || brief.en;
+        return `
+          <a class="glow-card aia-brief-card reveal ${index < 4 ? `reveal-delay-${Math.min(index + 1, 4)}` : ''}" href="${sanitizeText(briefHref(brief))}">
+            <div class="aia-card-top">
+              <div class="aia-card-date">${sanitizeText(formatDate(brief.date))}</div>
+              <div class="aia-card-badges">
+                <span class="aia-badge aia-badge-defenses">${sanitizeText(brief.defensesCount)} ${sanitizeText(t('aia.defenses'))}</span>
+              </div>
+            </div>
+            <div>
+              <h2 class="aia-card-title">${sanitizeText(localeData.title)}</h2>
+              <p class="aia-card-summary">${sanitizeText(localeData.summary)}</p>
+            </div>
+            <div class="aia-card-bottom">
+              <div class="aia-card-tags">
+                ${(brief.tags || []).map((tag) => `<span class="${tagClass(tag)}">${sanitizeText(tag)}</span>`).join('')}
+              </div>
+              <div class="aia-card-read">${sanitizeText(t('aia.read'))} &rarr;</div>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      setupReveal(Array.from(els.grid.querySelectorAll('.reveal')));
+    }
+
+    function hideLoading() {
+      els.loading.hidden = true;
+      els.loading.setAttribute('aria-hidden', 'true');
+    }
+
+    function bindEvents() {
+      let searchTimer;
+
+      els.search.addEventListener('input', (event) => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          state.query = event.target.value;
+          updateControls();
+          renderGrid();
+        }, 200);
+      });
+
+      els.clear.addEventListener('click', () => {
+        state.query = '';
+        els.search.value = '';
+        updateControls();
+        renderGrid();
+        els.search.focus();
+      });
+
+      els.month.addEventListener('change', (event) => {
+        state.month = event.target.value;
+        renderGrid();
+      });
+
+      els.sort.addEventListener('click', () => {
+        state.newestFirst = !state.newestFirst;
+        updateControls();
+        renderGrid();
+      });
+
+      document.addEventListener('aidefend:langchange', () => {
+        updateControls();
+        renderGrid();
+      });
+    }
+
+    function briefHref(brief) {
+      const month = monthKey(brief.date);
+      const hasOrder = Number.isInteger(brief.publishOrder) && brief.publishOrder >= 0;
+      const prefix = hasOrder ? `${String(brief.publishOrder).padStart(3, '0')}-` : '';
+      return `${month}/${prefix}${brief.slug}.html`;
+    }
+
+    async function filterExistingBriefs(briefs) {
+      const results = await Promise.all(briefs.map(async (brief) => {
+        try {
+          const response = await fetch(briefHref(brief), { method: 'HEAD', cache: 'no-cache' });
+          return response.ok ? brief : null;
+        } catch (error) {
+          return null;
+        }
+      }));
+      return results.filter(Boolean);
+    }
+
+    async function loadBriefs() {
+      let indexed = [];
+      try {
+        const module = await import('../data/briefs-index.js');
+        indexed = Array.isArray(module.briefs) ? module.briefs : [];
+      } catch (error) {
+        indexed = [];
+      }
+
+      state.briefs = await filterExistingBriefs(indexed);
+
+      const totalDefenses = state.briefs.reduce((sum, brief) => sum + Number(brief.defensesCount || 0), 0);
+      animateNumber(els.totalBriefs, state.briefs.length);
+      animateNumber(els.totalDefenses, totalDefenses);
+
+      hideLoading();
+      updateControls();
+      renderGrid();
+    }
+
+    bindEvents();
+    updateControls();
+    loadBriefs();
+  </script>
+</body>
+</html>

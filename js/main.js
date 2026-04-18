@@ -49,21 +49,21 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const patternB = [
-      { x: 0.38, y: 0.58, mag: 1.0 },  // Regulus - chest
-      { x: 0.92, y: 0.42, mag: 0.9 },  // Denebola - tail tip
-      { x: 0.32, y: 0.33, mag: 0.8 },  // Algieba - neck
-      { x: 0.75, y: 0.33, mag: 0.8 },  // Zosma - back
-      { x: 0.22, y: 0.12, mag: 0.7 },  // Ras Elased - top of head
-      { x: 0.27, y: 0.22, mag: 0.7 },  // Adhafera - mane
-      { x: 0.60, y: 0.55, mag: 0.7 },  // Chertan - belly
-      { x: 0.22, y: 0.42, mag: 0.7 },  // Al Jabhah - jaw
-      { x: 0.15, y: 0.18, mag: 0.6 },  // Rasalas - forehead
-      { x: 0.45, y: 0.75, mag: 0.5 },  // Subra - front paw
+      { x: 0.30, y: 0.62, mag: 1.0 },
+      { x: 0.92, y: 0.50, mag: 0.9 },
+      { x: 0.28, y: 0.35, mag: 0.8 },
+      { x: 0.72, y: 0.35, mag: 0.8 },
+      { x: 0.15, y: 0.10, mag: 0.7 },
+      { x: 0.22, y: 0.20, mag: 0.7 },
+      { x: 0.62, y: 0.58, mag: 0.7 },
+      { x: 0.18, y: 0.45, mag: 0.7 },
+      { x: 0.08, y: 0.15, mag: 0.6 },
+      { x: 0.20, y: 0.80, mag: 0.5 },
     ];
     const edgesB = [
-      [4, 8], [4, 5], [5, 2], [2, 7], [7, 0],  // sickle (head curve)
-      [0, 6], [6, 3], [3, 1],                     // body to tail
-      [0, 9],                                      // front leg
+      [4, 8], [4, 5], [5, 2], [2, 7], [7, 0],
+      [0, 6], [6, 3], [3, 1],
+      [0, 9],
     ];
 
     // Placement configs (fixed viewport positions)

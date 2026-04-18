@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Salesforce &#39;ForcedLeak&#39;: Indirect Prompt Injection via Agentforce Web-to-Lead Forms | AIDEFEND in Action</title>
+  <meta name="description" content="Noma Security showed that a Web-to-Lead form entry can embed a prompt that Agentforce later treats as instructions, exfiltrating CRM leads and PII to an expired-but-allowlisted domain the attackers re-registered. CVSS 9.4. The lesson is that agent safety needs three separate layers — untrusted-input handling, authority scoping, and sink enforcement — and this chain broke because URL allowlist hygiene failed.">
+  <meta name="author" content="AIDEFEND Labs, PBC">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://aidefendlabs.com/aia/2026-04/002-salesforce-agentforce-forcedleak-prompt-injection.html">
+
+  <meta property="og:site_name" content="AIDEFEND Labs">
+  <meta property="og:title" content="Salesforce &#39;ForcedLeak&#39;: Indirect Prompt Injection via Agentforce Web-to-Lead Forms | AIDEFEND in Action">
+  <meta property="og:description" content="Noma Security showed that a Web-to-Lead form entry can embed a prompt that Agentforce later treats as instructions, exfiltrating CRM leads and PII to an expired-but-allowlisted domain the attackers re-registered. CVSS 9.4. The lesson is that agent safety needs three separate layers — untrusted-input handling, authority scoping, and sink enforcement — and this chain broke because URL allowlist hygiene failed.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://aidefendlabs.com/aia/2026-04/002-salesforce-agentforce-forcedleak-prompt-injection.html">
+  <meta property="article:published_time" content="2026-04-16T00:00:00Z">
+  <meta property="article:author" content="Nate Nelson">
+  <meta name="aia-editorial-spec-version" content="2026-04-16">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Salesforce &#39;ForcedLeak&#39;: Indirect Prompt Injection via Agentforce Web-to-Lead Forms | AIDEFEND in Action">
+  <meta name="twitter:description" content="Noma Security showed that a Web-to-Lead form entry can embed a prompt that Agentforce later treats as instructions, exfiltrating CRM leads and PII to an expired-but-allowlisted domain the attackers re-registered. CVSS 9.4. The lesson is that agent safety needs three separate layers — untrusted-input handling, authority scoping, and sink enforcement — and this chain broke because URL allowlist hygiene failed.">
+
+  <meta name="theme-color" content="#050a15">
+  <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/aia.css">
+</head>
+<body class="aia-page">
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="AIDEFEND Labs Home">
+        <div class="nav-logo-icon">AID</div>
+        AIDEFEND Labs
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links">
+        <li><a href="../../index.html#framework" data-i18n="nav.framework">Framework</a></li>
+        <li><a href="../" class="active" data-i18n="nav.aia">AIDEFEND in Action</a></li>
+        <li><a href="../../index.html#mission" data-i18n="nav.mission">Mission</a></li>
+        <li><a href="../../index.html#roadmap" data-i18n="nav.whats-next">What's Next</a></li>
+        <li>
+          <a href="https://aidefend.net" target="_blank" rel="noopener" class="btn btn-primary nav-cta">
+            <span data-i18n="nav.explore">Explore AIDEFEND</span>
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 14.78a.75.75 0 0 0 1.06 0l7.22-7.22v5.69a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0 0 1.5h5.69l-7.22 7.22a.75.75 0 0 0 0 1.06z" clip-rule="evenodd"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===================== FULL-PAGE PARTICLE CANVAS ===================== -->
+  <canvas id="hero-canvas"></canvas>
+
+  <main class="aia-page-main">
+    <div id="brief-app"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="nav-logo-icon" style="width: 30px; height: 30px; font-size: 0.55rem; border-radius: 8px;">AID</div>
+          <div>
+            <div class="footer-brand-name">AIDEFEND Labs</div>
+            <span class="footer-brand-type" data-i18n="footer.pbc">Public Benefit Corporation</span>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="https://aidefend.net" target="_blank" rel="noopener" data-i18n="footer.framework">Framework</a>
+          <a href="https://github.com/edward-playground/aidefend-mcp" target="_blank" rel="noopener" data-i18n="footer.mcp">MCP Service</a>
+          <a href="https://github.com/edward-playground/aidefense-framework" target="_blank" rel="noopener" data-i18n="footer.github">GitHub</a>
+          <a href="https://www.linkedin.com/in/go-edwardlee/" target="_blank" rel="noopener" data-i18n="footer.linkedin">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; <span id="current-year">2026</span> AIDEFEND Labs, PBC. <span data-i18n="footer.rights">All rights reserved.</span></div>
+        <div class="footer-mission" data-i18n="footer.mission">Democratizing AI security defenses for organizations, developers, and the broader public.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="application/json" id="brief-data">
+{
+  "slug": "salesforce-agentforce-forcedleak-prompt-injection",
+  "date": "2026-04-16",
+  "source": {
+    "title": "Salesforce AI Agents Forced to Leak Sensitive Data",
+    "url": "https://www.darkreading.com/vulnerabilities-threats/salesforce-ai-agents-leak-sensitive-data",
+    "type": "article",
+    "author": "Nate Nelson",
+    "authoredAt": "2025-09-25"
+  },
+  "tags": [
+    "Prompt Injection",
+    "Agentic AI",
+    "Data Exfiltration",
+    "SaaS Security"
+  ],
+  "en": {
+    "title": "Salesforce 'ForcedLeak': Indirect Prompt Injection via Agentforce Web-to-Lead Forms",
+    "summary": "Noma Security showed that a Web-to-Lead form entry can embed a prompt that Agentforce later treats as instructions, exfiltrating CRM leads and PII to an expired-but-allowlisted domain the attackers re-registered. CVSS 9.4.\n\nThe lesson is that agent safety needs three separate layers — untrusted-input handling, authority scoping, and sink enforcement — and this chain broke because URL allowlist hygiene failed.",
+    "threatAnalysis": "\u003cul>\u003cli>\u003cstrong>Attack surface.\u003c/strong> A Salesforce Web-to-Lead form's \u003ccode>Description\u003c/code> field accepts user text. When a downstream Agentforce agent later processes the lead, it also follows any prompt embedded in that field — indirect prompt injection through a legitimate intake surface.\u003c/li>\u003cli>\u003cstrong>Weak context boundary.\u003c/strong> Noma first probed the agent with an unrelated prompt (\"what's red + yellow?\"). It answered \"orange\", proving the model would engage with instructions outside its sales domain instead of rejecting them.\u003c/li>\u003cli>\u003cstrong>Exfil path.\u003c/strong> Salesforce's CSP blocked arbitrary outbound domains, but its allowlist included \u003ccode>my-salesforce-cms.com\u003c/code>, whose registration had expired. Noma re-registered it, crafted a prompt that made the agent POST lead data there, and closed the exfil chain.\u003c/li>\u003cli>\u003cstrong>Severity.\u003c/strong> CVSS 9.4. Noma's CTO confirmed the compromised agent could also modify records, delete databases, and pivot to connected systems. Exfiltrated data includes pipeline, PII, conversation transcripts, and payment info.\u003c/li>\u003cli>\u003cstrong>Vendor response.\u003c/strong> Salesforce reclaimed the expired domain and tightened Trusted URLs to block untrusted-URL output. Structural fixes to how the model separates instruction from data remain in progress.\u003c/li>\u003c/ul>",
+    "defenses": [
+      {
+        "id": "AID-H-019.005",
+        "name": "Value-Level Capability Metadata & Data Flow Sink Enforcement",
+        "relevance": "Sink-level policy is what should have blocked exfil even after the injection landed. Trusted URLs is sink enforcement in spirit, but it needs to be bound to the sensitivity of the payload the agent is about to send, not only to a static domain allowlist.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-020.001",
+        "name": "URL Normalization & Allowlist Filtering",
+        "relevance": "The specific failure was an expired registration sitting on the allowlist, which an attacker could reclaim. URL allowlists need continuous hygiene: live registration checks, ownership verification, and a daily sweep of domains whose DNS no longer resolves to the intended vendor.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-002.002",
+        "name": "Inference-Time Prompt & Input Validation",
+        "relevance": "User-submitted form text that will later enter an agent's context must be validated at inference time — tag externally sourced text as untrusted data, strip or flag instruction-shaped content, and ensure the agent architecture does not execute directives drawn from the untrusted slot.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-M-009.002",
+        "name": "Authority Envelope & Action Risk Classification",
+        "relevance": "Bulk CRM export and record mutation are high-risk actions that should sit outside an intake-and-reply agent's normal envelope. A proper authority scope would require step-up approval for any outbound request that carries customer records, regardless of the destination URL.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-018.007",
+        "name": "Dual-LLM Isolation Pattern",
+        "relevance": "The structural fix is to split the LLM that parses untrusted content from the agent that calls tools, and to pass only a typed, schema-validated summary between them. ForcedLeak cannot chain if the tool-capable agent never sees the raw Description field.",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "Allowlist domain ownership monitoring",
+        "description": "Beyond the techniques above, teams relying on domain allowlists (CSP, Trusted URLs, agent output whitelists) should layer in continuous monitoring of every allowlisted domain's registration and DNS state, because an attacker-reclaimed expired domain silently downgrades the entire policy.",
+        "suggestion": "Run a daily scheduled check against every allowlisted domain: registration still held by your organisation or a named trusted vendor, and DNS/MX/NS still pointing to expected infrastructure. Alert on any deviation; do not run this monthly."
+      },
+      {
+        "area": "Egress-volume anomaly detection on agent outputs",
+        "description": "Beyond URL allowlisting, defenders should log what the agent actually transmits and tag each call with data sensitivity and record count. A single lead sent to a third-party form is normal; a bulk list of all customer leads is not, regardless of destination.",
+        "suggestion": "Instrument agent tool invocations with per-call data-sensitivity labels and record-count metadata. Rate-limit or step-up on high-volume or high-sensitivity sinks even when the URL is on the allowlist."
+      }
+    ],
+    "whatDefendersShouldDoNow": "\u003cul>\u003cli>Audit every place your SaaS AI agents ingest user-submitted content (web forms, uploads, comments, email threads) and confirm whether the architecture treats that content as data or as instructions.\u003c/li>\u003cli>Inventory every domain on your agent output allowlists and CSPs. Verify live registration and ownership for each; remove any domain whose registration has lapsed or whose DNS no longer resolves to trusted infrastructure.\u003c/li>\u003cli>Wrap agent actions that emit customer records, mutate CRM state, or hit paid or sensitive APIs in a step-up approval path, regardless of destination URL.\u003c/li>\u003cli>Instrument agent outputs with data-sensitivity labels and volume metrics. Alert when an agent attempts to exfiltrate bulk records, even to an allowlisted URL.\u003c/li>\u003cli>Where structural change is feasible, adopt a dual-LLM or tool-isolation pattern so the component that reads untrusted user input is not the component that holds tool authority.\u003c/li>\u003c/ul>",
+    "conclusion": "\u003cp>ForcedLeak is a canonical case for why agentic AI safety has to be defence-in-depth. Three separate layers could have stopped this chain — input validation at ingest, authority scoping on the agent's action set, or sink-level policy on data egress — and any one holding would have prevented the exfil. AIDEFEND covers each layer; the lesson here is that a static URL allowlist is too brittle to be the primary exfil control, and every allowlist must be paired with ongoing domain hygiene and egress-volume monitoring.\u003c/p>"
+  },
+  "zh-TW": {
+    "title": "Salesforce Agentforce「ForcedLeak」：Web-to-Lead 表單遭提示詞注入攻擊，CRM 資料被帶走",
+    "summary": "Noma Security 測試了 Salesforce Agentforce 的安全性，找到一條完整的攻擊鏈：在 Salesforce 的 Web-to-Lead 表單（從網頁自動收集潛在客戶資料的功能）的描述欄塞進一段提示詞（prompt），之後 Agentforce agent 處理這筆潛在客戶資料時會把它當成指令照做，把 CRM 的客戶清單和 PII 傳到一個還在 Salesforce 白名單上、但原註冊已過期的網域——Noma Security 買下了這個網域，整條攻擊鏈就串聯成功了。CVSS 9.4。\n\n這個案例再次說明，agent 安全得靠三層控制同時成立：不可信輸入處理、權限範圍、資料出口策略；這次是 URL 白名單沒做好把關。",
+    "threatAnalysis": "\u003cul>\u003cli>\u003cstrong>攻擊面。\u003c/strong> Salesforce Web-to-Lead 表單的「描述（Description）」欄位接受使用者輸入。當下游的 Agentforce agent 之後處理這筆潛在客戶資料，它也會順便解析並執行藏在描述裡的提示詞——這就是從合法攝入介面發動的間接提示詞注入攻擊（prompt injection）。\u003c/li>\u003cli>\u003cstrong>情境邊界薄弱。\u003c/strong> Noma 研究人員先用一個不相關的問題試 agent：「紅色加黃色是什麼顏色？」 agent 回「橘色」。這就證明這個模型會回應業務情境以外的指令，不會把它當成無關文字擋掉。\u003c/li>\u003cli>\u003cstrong>外洩路徑。\u003c/strong> Salesforce 的 CSP 本來會擋掉任意外部網域，但白名單裡有一個 \u003ccode>my-salesforce-cms.com\u003c/code>，它的註冊已經過期。Noma 把網域買回來、寫一段提示詞叫 agent 把潛在客戶資料 POST 到這個網域，整條攻擊鏈就接起來了。\u003c/li>\u003cli>\u003cstrong>嚴重性。\u003c/strong> CVSS 9.4。Noma CTO 說被攻陷的 agent 不只能外洩資料，還能改 CRM 紀錄、刪資料庫、甚至跳到相連的其他系統。被帶走的資料類別包括銷售 pipeline、PII、對話逐字稿、付款資訊。\u003c/li>\u003cli>\u003cstrong>廠商回應。\u003c/strong> Salesforce 把過期網域重新註冊回來、把 Trusted URLs 規則收緊，擋住 agent 送到不可信 URL 的輸出。但模型在結構上怎麼分辨「指令」和「資料」的根本修正，還在進行中。\u003c/li>\u003c/ul>",
+    "defenses": [
+      {
+        "id": "AID-H-019.005",
+        "name": "Value-Level Capability Metadata & Data Flow Sink Enforcement",
+        "relevance": "就算 prompt injection 成功了，真正要擋住外洩的是資料流出口（sink）層級的策略。Trusted URLs 這個機制精神上就是 sink 層級的控制，但它該綁在「agent 即將送出的資料機敏程度」上，不是只綁在一份靜態網域白名單上。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-020.001",
+        "name": "URL Normalization & Allowlist Filtering",
+        "relevance": "這次具體的失敗點，是白名單上有一個過期的註冊，結果被攻擊者買回去了。URL 白名單需要持續維護：即時的註冊狀態檢查、所有權驗證，還有每天把 DNS 不再指向原廠的網域掃掉。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-002.002",
+        "name": "Inference-Time Prompt & Input Validation",
+        "relevance": "會流進 agent 上下文的使用者表單文字，必須在推論（inference）時就先驗證過——把所有外部來源的文字標成不可信資料、把看起來像指令的內容標記或移除，並確保 agent 架構不會去執行這塊不可信欄位裡的指令。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-M-009.002",
+        "name": "Authority Envelope & Action Risk Classification",
+        "relevance": "大量 CRM 匯出和紀錄異動，對一個負責收進潛在客戶、自動回覆的 agent 來說，是落在權限範圍外的高風險動作。真正劃好的權限範圍會要求：任何夾帶客戶紀錄的對外請求都必須走一道升級核准的程序，不管目的 URL 是什麼。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-018.007",
+        "name": "Dual-LLM Isolation Pattern",
+        "relevance": "結構上的根本解，是把「讀不可信內容的 LLM」和「呼叫工具的 agent」切開，中間只傳一份型別明確、schema 驗證過的結構化摘要。如果有做雙 LLM 隔離，帶工具權限的 agent 是看不到原始的 Description 欄位的，ForcedLeak 這條鏈就串不起來。",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "白名單網域的所有權監控",
+        "description": "除了上面列的技術，依賴網域白名單（CSP、Trusted URLs、agent 輸出白名單）的團隊，還應該再加一層：對每個白名單網域的註冊狀態和 DNS 狀態做持續監控，因為被攻擊者搶回去的過期網域會把整份策略悄悄打穿。",
+        "suggestion": "跑一個每日排程：對每個白名單網域確認（一）註冊仍屬於自家組織或一個明確列名的可信廠商，（二）DNS/MX/NS 還指向預期的主機；任何異動立刻發出警示通知，每月一次不夠，要每天跑。"
+      },
+      {
+        "area": "Agent 輸出的流量異常偵測",
+        "description": "除了 URL 白名單，防禦方還要記錄 agent 實際送出去的內容，並對每次呼叫標上資料機敏程度和紀錄筆數。送一筆潛在客戶資料到第三方表單是正常的；一次送整份客戶清單就不是，不管目的在不在白名單上。",
+        "suggestion": "對 agent 的工具呼叫加上每次呼叫的資料機敏程度標籤和紀錄筆數 metadata；在高流量或高機敏的出口上做速率限制或升級核准，就算 URL 在白名單裡也一樣。"
+      }
+    ],
+    "whatDefendersShouldDoNow": "\u003cul>\u003cli>盤點每一個會讓 SaaS AI agent 攝入使用者輸入的地方（網頁表單、上傳、留言、email thread），確認 agent 架構是把這段內容當「資料」、還是當「指令」在處理。\u003c/li>\u003cli>對每個 agent 輸出白名單和 CSP 裡的網域，做一次所有權與註冊狀態盤點——確認註冊和所有權都還在、DNS 也還指向可信的主機；過期、或 DNS 已經指向別處的網域一律從白名單移除。\u003c/li>\u003cli>會讓 agent 送出客戶紀錄、動到 CRM 狀態、或執行付費／敏感 API 的動作，一律多加一層升級核准的程序，不管目的 URL 是什麼。\u003c/li>\u003cli>對 agent 輸出加上資料機敏程度標籤和流量指標；一旦 agent 試圖把大筆紀錄送出去就發出警示通知，就算目標 URL 在白名單裡也一樣。\u003c/li>\u003cli>如果架構能動，就採用雙 LLM 或工具隔離的 pattern——讓「讀不可信使用者輸入的那塊」和「持有工具權限的那塊」不是同一個。\u003c/li>\u003c/ul>",
+    "conclusion": "\u003cp>ForcedLeak 是很經典的一個案例，說明為什麼 agentic AI 安全一定要採用縱深防禦（defence-in-depth）策略，不能押在單一一條可信控制上。這條鏈有三層都可以擋下——攝入時的輸入驗證、agent 動作範圍上的權限劃分、或資料出口的 sink 層策略——任何一層守住了，外洩就不會發生。AIDEFEND 在這三層都已經給出對應技術；這個案例想告訴防禦方的是：把靜態 URL 白名單當成防外洩的主力太脆弱，每份白名單都必須搭配對網域的持續把關，和對出口流量的監控。\u003c/p>"
+  },
+  "defensesCount": 5,
+  "gapsCount": 2,
+  "publishOrder": 2
+}
+  </script>
+
+  <script src="../../js/purify.min.js"></script>
+  <script src="../../js/i18n.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/brief-page.js"></script>
+</body>
+</html>

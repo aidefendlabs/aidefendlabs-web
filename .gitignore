@@ -1,1 +1,6 @@
 .claude/
+.vscode/
+devtools/.data-cache.json
+devtools/create-in-action.js
+AGENTS.md
+CLAUDE.md

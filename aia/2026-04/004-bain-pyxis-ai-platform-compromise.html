@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Bain Pyxis Compromise: When a Frontend Credential Owns Eleven Databases and the Identity Plane | AIDEFEND in Action</title>
+  <meta name="description" content="CodeWall&#39;s autonomous agent found a hardcoded AI service-account credential in Bain Pyxis&#39;s frontend JS bundle, got an authenticated production session in 18 minutes, then chained a raw-SQL API endpoint into full read/write on 11 databases — 159B+2.5B rows of consumer data, 9,989 AI conversations, 36,869 complete JWTs, the 18,621-character system prompt, and LLM functions callable against live production tables across 8 models including Llama 3.1 405B. A separate GraphQL endpoint allowed account creation and directory writes directly into Bain&#39;s Okta tenant. Lesson: an AI platform&#39;s service account inherits everything behind it — databases, conversation history, identity directory. Scope it like a production admin account, never ship it inside a frontend bundle, and never wire its credentials into an IdP write path.">
+  <meta name="author" content="AIDEFEND Labs, PBC">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://aidefendlabs.com/aia/2026-04/004-bain-pyxis-ai-platform-compromise.html">
+
+  <meta property="og:site_name" content="AIDEFEND Labs">
+  <meta property="og:title" content="Bain Pyxis Compromise: When a Frontend Credential Owns Eleven Databases and the Identity Plane | AIDEFEND in Action">
+  <meta property="og:description" content="CodeWall&#39;s autonomous agent found a hardcoded AI service-account credential in Bain Pyxis&#39;s frontend JS bundle, got an authenticated production session in 18 minutes, then chained a raw-SQL API endpoint into full read/write on 11 databases — 159B+2.5B rows of consumer data, 9,989 AI conversations, 36,869 complete JWTs, the 18,621-character system prompt, and LLM functions callable against live production tables across 8 models including Llama 3.1 405B. A separate GraphQL endpoint allowed account creation and directory writes directly into Bain&#39;s Okta tenant. Lesson: an AI platform&#39;s service account inherits everything behind it — databases, conversation history, identity directory. Scope it like a production admin account, never ship it inside a frontend bundle, and never wire its credentials into an IdP write path.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://aidefendlabs.com/aia/2026-04/004-bain-pyxis-ai-platform-compromise.html">
+  <meta property="article:published_time" content="2026-04-18T00:00:00Z">
+  <meta property="article:author" content="Paul Price (CodeWall)">
+  <meta name="aia-editorial-spec-version" content="2026-04-16">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bain Pyxis Compromise: When a Frontend Credential Owns Eleven Databases and the Identity Plane | AIDEFEND in Action">
+  <meta name="twitter:description" content="CodeWall&#39;s autonomous agent found a hardcoded AI service-account credential in Bain Pyxis&#39;s frontend JS bundle, got an authenticated production session in 18 minutes, then chained a raw-SQL API endpoint into full read/write on 11 databases — 159B+2.5B rows of consumer data, 9,989 AI conversations, 36,869 complete JWTs, the 18,621-character system prompt, and LLM functions callable against live production tables across 8 models including Llama 3.1 405B. A separate GraphQL endpoint allowed account creation and directory writes directly into Bain&#39;s Okta tenant. Lesson: an AI platform&#39;s service account inherits everything behind it — databases, conversation history, identity directory. Scope it like a production admin account, never ship it inside a frontend bundle, and never wire its credentials into an IdP write path.">
+
+  <meta name="theme-color" content="#050a15">
+  <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/aia.css">
+</head>
+<body class="aia-page">
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="AIDEFEND Labs Home">
+        <div class="nav-logo-icon">AID</div>
+        AIDEFEND Labs
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links">
+        <li><a href="../../index.html#framework" data-i18n="nav.framework">Framework</a></li>
+        <li><a href="../" class="active" data-i18n="nav.aia">AIDEFEND in Action</a></li>
+        <li><a href="../../index.html#mission" data-i18n="nav.mission">Mission</a></li>
+        <li><a href="../../index.html#roadmap" data-i18n="nav.whats-next">What's Next</a></li>
+        <li>
+          <a href="https://aidefend.net" target="_blank" rel="noopener" class="btn btn-primary nav-cta">
+            <span data-i18n="nav.explore">Explore AIDEFEND</span>
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 14.78a.75.75 0 0 0 1.06 0l7.22-7.22v5.69a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0 0 1.5h5.69l-7.22 7.22a.75.75 0 0 0 0 1.06z" clip-rule="evenodd"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===================== FULL-PAGE PARTICLE CANVAS ===================== -->
+  <canvas id="hero-canvas"></canvas>
+
+  <main class="aia-page-main">
+    <div id="brief-app"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="nav-logo-icon" style="width: 30px; height: 30px; font-size: 0.55rem; border-radius: 8px;">AID</div>
+          <div>
+            <div class="footer-brand-name">AIDEFEND Labs</div>
+            <span class="footer-brand-type" data-i18n="footer.pbc">Public Benefit Corporation</span>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="https://aidefend.net" target="_blank" rel="noopener" data-i18n="footer.framework">Framework</a>
+          <a href="https://github.com/edward-playground/aidefend-mcp" target="_blank" rel="noopener" data-i18n="footer.mcp">MCP Service</a>
+          <a href="https://github.com/edward-playground/aidefense-framework" target="_blank" rel="noopener" data-i18n="footer.github">GitHub</a>
+          <a href="https://www.linkedin.com/in/go-edwardlee/" target="_blank" rel="noopener" data-i18n="footer.linkedin">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; <span id="current-year">2026</span> AIDEFEND Labs, PBC. <span data-i18n="footer.rights">All rights reserved.</span></div>
+        <div class="footer-mission" data-i18n="footer.mission">Democratizing AI security defenses for organizations, developers, and the broader public.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="application/json" id="brief-data">
+{
+  "slug": "bain-pyxis-ai-platform-compromise",
+  "date": "2026-04-18",
+  "source": {
+    "title": "How We Hacked Bain's Competitive Intelligence Platform",
+    "url": "https://codewall.ai/blog/how-we-hacked-bains-competitive-intelligence-platform",
+    "type": "blog",
+    "author": "Paul Price (CodeWall)",
+    "authoredAt": "2026-04-13"
+  },
+  "tags": [
+    "Agentic AI",
+    "Identity & Access",
+    "Data Exfiltration",
+    "Enterprise AI"
+  ],
+  "en": {
+    "title": "Bain Pyxis Compromise: When a Frontend Credential Owns Eleven Databases and the Identity Plane",
+    "summary": "CodeWall's autonomous agent found a hardcoded AI service-account credential in Bain Pyxis's frontend JS bundle, got an authenticated production session in 18 minutes, then chained a raw-SQL API endpoint into full read/write on 11 databases — 159B+2.5B rows of consumer data, 9,989 AI conversations, 36,869 complete JWTs, the 18,621-character system prompt, and LLM functions callable against live production tables across 8 models including Llama 3.1 405B. A separate GraphQL endpoint allowed account creation and directory writes directly into Bain's Okta tenant.\n\nLesson: an AI platform's service account inherits everything behind it — databases, conversation history, identity directory. Scope it like a production admin account, never ship it inside a frontend bundle, and never wire its credentials into an IdP write path.",
+    "threatAnalysis": "\u003cul>\u003cli>\u003cstrong>Entry was a frontend secret.\u003c/strong> The Pyxis public JS bundle shipped a hardcoded AI service-account username/password. CodeWall's autonomous agent downloaded the bundle, authenticated, and was on production in 18 minutes. No brute force, no zero-day — just a credential that should never have been in a client-side artifact.\u003c/li>\u003cli>\u003cstrong>The service account was wildly over-privileged.\u003c/strong> That one credential held read/write across 11 databases and hundreds of permissions — spanning a 159B-row consumer transaction warehouse, a 2.5B-row omnichannel dataset, per-client Fortune 500 schemas, 9,989 AI conversations, and the Pyxis system prompt table.\u003c/li>\u003cli>\u003cstrong>A Pyxis API endpoint accepted raw SQL and reflected DB errors.\u003c/strong> That gave the agent direct query-level access. LLM functions on the same platform were callable against live production tables with 8 models including Llama 3.1 405B, turning every LLM into a query tool with the service account's full reach.\u003c/li>\u003cli>\u003cstrong>The AI platform was wired into Okta.\u003c/strong> A separate GraphQL endpoint allowed account creation and Okta directory writes using only the foothold session — no privileged auth step. Rotating the leaked credential does not evict an attacker who has already written into the IdP.\u003c/li>\u003cli>\u003cstrong>Exfil and integrity primitives were silent.\u003c/strong> 36,869 complete JWTs (365-day expiry, no MFA) sat in an activity-log table; a bulk-export endpoint accepted attacker-controlled external destinations; a single API call triggered a full DB clone. Write access across 11 databases means every consumer record, client schema, conversation log, and the system prompt itself was tamperable — not just readable.\u003c/li>\u003cli>\u003cstrong>Discovery speed versus a traditional pentest.\u003c/strong> CodeWall's autonomous agent assembled the full chain in hours; a conventional scoped pentest had not flagged any of these. Bain responded well — credential rotated within 24 hours of the disclosure email (2026-03-17 → 2026-03-18), full remediation by 2026-03-19, public disclosure 2026-04-13.\u003c/li>\u003c/ul>",
+    "defenses": [
+      {
+        "id": "AID-H-004.002",
+        "name": "Service & API Authentication",
+        "relevance": "Every leg of this attack chain rests on IAM failures around a single AI service account: its password was shipped in a frontend bundle, it held read/write across 11 databases and hundreds of roles, its JWTs lived for 365 days without MFA and were written verbatim into an activity log, and its session reached a GraphQL endpoint that could mutate the corporate Okta directory. Real IAM for AI means privileged credentials never sit in client-side artifacts, service accounts are scoped per asset class (not per platform), tokens are short-lived and never logged in full, and an AI backend cannot reach the enterprise IdP's write plane.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-019.002",
+        "name": "Policy-Based Access Control",
+        "relevance": "Pyxis exposed LLM function invocation against live production tables with 8 models available — effectively turning every model into a query tool carrying the service account's full reach, plus additional primitives for bulk export to attacker-controlled destinations and a single-call full DB clone. Policy-based access control means the model cannot call database, export, or admin primitives without a separate authorization evaluated per action type, per data class, and per destination; 'query prod' is never a single exposed tool.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-033.002",
+        "name": "Cross-Tenant Serving-State Isolation",
+        "relevance": "Every Fortune 500 client sat in its own schema inside the same database, reachable from the same AI service account — tenant separation in name only. The 9,989 AI conversations included cross-client competitive-intelligence questions authored by named client employees, all readable from a single foothold. True multi-tenant isolation requires each client's data to sit behind a distinct identity, schema boundary, and retrieval policy, so an LLM session initiated by one client cannot query another client's schema regardless of agent code.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-017",
+        "name": "System Prompt Hardening",
+        "relevance": "The 18,621-character Pyxis system prompt — containing the report methodology, SQL schema definitions, and analytical frameworks the platform is built on — was retrievable through conversation metadata by any authenticated caller. The prompt is both IP and a recon aid: its embedded schema names are a blueprint of the production database. Hardening means the prompt reaches the model through a privileged channel only, is never returned verbatim in user-reachable responses or metadata, and is protected by integrity controls so tampered variants cannot silently load.",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "Frontend build secret detection as a release gate",
+        "description": "Beyond the IAM hardening above, teams shipping AI platforms should also consider automated secret scanning on every frontend build artifact before the build reaches production CDN. Bain's leaked credential sat inside a bundle an autonomous agent could download passively; any secret-detection tool that had run against that bundle would have flagged it.",
+        "suggestion": "Wire a gitleaks / trufflehog-style scanner into the frontend CI pipeline with builds blocked on any high-confidence credential match; pair it with a weekly sweep of already-deployed bundles and a standing incident playbook for any hit found in production."
+      },
+      {
+        "area": "Autonomous offensive testing as a routine operational control",
+        "description": "CodeWall's autonomous agent chained this entire attack in hours; a scoped human pentest had not caught it. Defenders running AI platforms can additionally layer in continuous machine-speed red-team assessment that covers authentication coverage, SQLi, IdP write paths, LLM tool surface, and secret leakage on every release.",
+        "suggestion": "Wire an autonomous testing agent into release gates and production drift checks as a second layer on top of traditional AppSec, so checklist-style pentests no longer define the upper bound of what you can catch."
+      }
+    ],
+    "whatDefendersShouldDoNow": "\u003cul>\u003cli>Rotate every AI service-account credential, then audit git history, frontend build artifacts, and config-as-code repos for any residual copies; assume anything shipped to a browser is already leaked.\u003c/li>\u003cli>Re-scope every AI service account to the minimum per-asset-class permission set. No account should hold read/write across your whole AI data layer just because the platform is convenient to build that way.\u003c/li>\u003cli>Separate the AI platform's credentials from any IdP write path. An AI backend should never be able to mutate your Okta, Azure AD, or Google Workspace directory on its own.\u003c/li>\u003cli>Audit every LLM function and tool the platform exposes — gate each call by data class, action type, and destination. Retire any 'run SQL on prod' catch-all primitive and any bulk-export endpoint that accepts attacker-controlled destinations.\u003c/li>\u003cli>Add secret-scanning to your frontend release gate and wire autonomous red-team testing into release / drift checks. Bain's leaked credential was in production long enough that a passive scanner found it; a traditional pentest did not.\u003c/li>\u003c/ul>",
+    "conclusion": "\u003cp>Bain Pyxis is the second case in this series where the real crown jewel was not the model, but the identity the model runs as. Hardcoded frontend credentials, over-permissioned service accounts, and AI platforms wired into corporate IdPs are not AI-specific bugs — they are generic web and infrastructure bugs — but in an AI platform context the blast radius includes cross-client conversation history, competitive-intelligence schemas, the system prompt itself, and the enterprise identity directory. AIDEFEND's IAM, tool-authorization, multi-tenant-isolation, and system-prompt hardening techniques cover the defensive floor; the operational lesson is that an AI platform's service account deserves the same scoping, auditing, and monitoring that you would apply to a production database admin — because that is exactly what it became the moment it left the frontend bundle.\u003c/p>"
+  },
+  "zh-TW": {
+    "title": "Bain Pyxis 平台被攻破：一組寫死在前端的密碼，讓攻擊者拿下 11 個資料庫加 Okta 的寫入權",
+    "summary": "CodeWall 的自主 agent 在 Bain & Company 的 Pyxis 競爭情報平台的前端 JS bundle 裡，發現了一組寫死的 AI 服務帳號（service account）帳密——agent 直接拿這組帳密登入，從偵察到拿到正式環境 session 只花了 18 分鐘。接著，靠一個接受原始 SQL 指令的 API 端點，取得了 11 個資料庫的讀寫權，裡面涵蓋 1,590 億筆消費交易資料、9,989 筆 AI 對話、36,869 筆完整 JWT、18,621 個字元的系統提示詞（system prompt），平台上的 LLM 函式還能直接查詢正式環境的資料表，可用的模型有 8 個（包括 Llama 3.1 405B）。另一個 GraphQL 端點不用額外驗證，就能寫進 Bain 的 Okta 目錄，直接創帳號。\n\n對防禦方來說，重點是：AI 平台的服務帳號是整個資料庫、對話紀錄、身分目錄的集中授權點——必須當作管理員帳號來管理。權限切到最小、密碼絕對不能留在前端、也不能讓它直接有 IdP（例如微軟 Active Directory、Okta）的寫入權。",
+    "threatAnalysis": "\u003cul>\u003cli>\u003cstrong>入口就是一組寫死在前端的密碼。\u003c/strong> Pyxis 的公開 JS bundle 裡直接寫死了一組 AI 服務帳號的帳密。CodeWall 的自主 agent 下載 bundle、登入，18 分鐘就拿到正式環境 session。沒有暴力破解、沒有 0-day——就是一組根本不該出現在前端成品裡的密碼。\u003c/li>\u003cli>\u003cstrong>這組服務帳號權限嚴重過大。\u003c/strong> 它在 11 個資料庫都有讀寫權、擁有上百個權限角色——涵蓋 1,590 億筆的消費交易資料倉、25 億筆的全通路資料集、每個 Fortune 500 客戶專屬的 schema（資料庫內的資料分組）、9,989 筆 AI 對話、還有 Pyxis 的系統提示詞表。\u003c/li>\u003cli>\u003cstrong>一個 Pyxis API 端點直接收原始 SQL 並回拋錯誤訊息。\u003c/strong> 等於給 agent 一條直達查詢層的捷徑。同一個平台上的 LLM 函式還能直接對正式環境資料表跑——8 個模型可選，包括 Llama 3.1 405B，每一個模型都變成一把鑰匙，能讀這組服務帳號能讀的所有東西。\u003c/li>\u003cli>\u003cstrong>AI 平台和身分層綁在一起。\u003c/strong> 另一個 GraphQL 端點，只要有初始 session 就能創 Okta 帳號、改 Okta 目錄，不需要額外的特權驗證步驟。就算換掉被洩漏的密碼，也沒辦法把已經寫進 IdP 的攻擊者踢出去。\u003c/li>\u003cli>\u003cstrong>外洩和竄改手段俱全，而且都很低調。\u003c/strong> 活動紀錄表裡存了 36,869 筆完整 JWT（效期 365 天、不需要多因素驗證（MFA））；有一個能大量匯出資料的 API 端點，攻擊者可以指定資料要送去哪個網址；還有一個 API，呼叫一次就能把整個資料庫完整複製一份出去。加上對 11 個資料庫都有寫入權，每筆消費紀錄、每個客戶 schema、每筆對話紀錄、甚至系統提示詞本身，全部可被竄改。\u003c/li>\u003cli>\u003cstrong>攻擊速度上跟傳統 pentest 是完全不同的量級。\u003c/strong> 整條攻擊鏈，CodeWall 的自主 agent 幾小時就組合出來；過去的 checklist 式 pentest 一個都沒抓到。Bain 的處置很好——揭露信寄出 24 小時內輪替密碼（2026-03-17 → 2026-03-18）、2026-03-19 完整修補、2026-04-13 公開揭露。\u003c/li>\u003c/ul>",
+    "defenses": [
+      {
+        "id": "AID-H-004.002",
+        "name": "Service & API Authentication",
+        "relevance": "整條攻擊鏈每一段都是 IAM 沒做好：一組 AI 服務帳號的密碼被打包在前端 bundle 裡，它在 11 個資料庫都有讀寫權、角色上百個，它的 JWT 效期 365 天又沒 MFA 而且整張存進活動紀錄，最後它的 session 還能呼叫一個可以改 Okta 目錄的 GraphQL 端點。AI 系統的 IAM 要做好：帳號密碼（尤其是特權帳號）絕對不能放在前端成品裡、服務帳號權限要按資產類別切分（不是按平台一把抓）、token 要短效期而且絕對不能把完整 JWT 寫進 log、AI 後端更不能直接觸及企業 IdP 的寫入面。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-019.002",
+        "name": "Policy-Based Access Control",
+        "relevance": "Pyxis 讓 LLM 函式可以直接對正式環境資料表跑，8 個模型都能用——等於讓每一個 LLM 都變成一把鑰匙，能讀這組服務帳號能讀的所有資料；再加上平台上還有幾個高風險的 API——一個能把大量資料匯出到攻擊者指定的網址，另一個呼叫一次就能把整個資料庫完整複製一份。Policy-based 的存取控制意思是：模型要呼叫資料庫 API、匯出 API、或管理類 API 時，必須通過一層獨立的政策授權，依動作類型、資料類別、目的地分別評估；絕對不要有一個「對正式環境跑 SQL」的萬用工具在那邊。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-033.002",
+        "name": "Cross-Tenant Serving-State Isolation",
+        "relevance": "每個 Fortune 500 客戶各有自己的 schema，但都在同一個資料庫裡，而且都是同一組 AI 服務帳號可以存取。雖然有名義上的多租戶隔離，實際上卻沒有做好安全邊界。9,989 筆 AI 對話裡還包含各客戶員工寫的跨客戶競爭情報查詢，攻擊者只要拿下一組服務帳號，就能把這些全部讀到。真正的多租戶隔離是：每個客戶的資料背後要綁不同的身分、不同的 schema 邊界、不同的擷取策略，讓某個客戶發起的 LLM session 無論中間 agent 程式怎麼寫，都查不到另一個客戶的 schema。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-017",
+        "name": "System Prompt Hardening",
+        "relevance": "Pyxis 的系統提示詞有 18,621 個字元，內容包含整個平台的報告方法、SQL schema 定義、分析框架——而且任何通過驗證的呼叫者都能從對話 metadata 抓到它。這份提示詞同時是智財，也是偵察情報：裡面引用的 schema 名稱本身就是正式資料庫的藍圖。系統提示詞強化（System Prompt Hardening）的意思是：只透過受保護的內部管道把提示詞交給模型、絕對不能讓它出現在使用者可讀的回應或 metadata 裡，另外實施完整性控制（integrity controls，例如 hashing），讓被竄改過的版本不被系統使用。",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "前端打包產物的密碼偵測要列入上線關卡",
+        "description": "除了上面 IAM 這些技術，跑 AI 平台的團隊還應該考慮一件事：每次前端 build 產出的成品，在推到正式 CDN 前都要先跑自動化的密碼掃描。Bain 這組被洩漏的密碼就坐在一份自主 agent 可以被動下載的 bundle 裡；任何一個跑過 bundle 的密碼掃描工具，都能抓到。",
+        "suggestion": "在前端 CI pipeline 接進 gitleaks / trufflehog 這類掃描器，一旦比對到高信心度的密碼就擋 build；再加上每週一次對已上線 bundle 的掃描，以及正式環境一發現外洩密碼就啟動的標準事件流程。"
+      },
+      {
+        "area": "自主攻擊測試納入常規控制",
+        "description": "CodeWall 的自主 agent 幾小時就串出整條攻擊鏈，傳統 scoped pentest 一個都沒抓到。跑 AI 平台的防禦方可以再加一層：用機器速度持續做紅隊評估，涵蓋驗證覆蓋率、SQLi、IdP 寫入路徑、LLM 工具面、以及密碼外洩。",
+        "suggestion": "把自主測試 agent 接進上線關卡和正式環境的偏移檢查——當成傳統 AppSec 之上的第二層，不要讓 checklist 式 pentest 成為你能抓到的上限。"
+      }
+    ],
+    "whatDefendersShouldDoNow": "\u003cul>\u003cli>若發現攻擊的狀況，先輪換所有 AI 服務帳號的密碼，再盤點 git 歷史、前端 build 產物、config-as-code repo，把殘留的備份都清掉——我們要假設任何曾經可以被瀏覽器存取的資料都已外洩。\u003c/li>\u003cli>把每個 AI 服務帳號的權限，依照最低權限原則（Least privilege principle），按資產類別給予其最小需要的權限。不要因為方便開發，就讓一組帳號橫跨整個 AI 資料層的讀寫。\u003c/li>\u003cli>把 AI 平台的憑證和 IdP 的寫入路徑切開。AI 後端不該能自己動到 Okta、Azure AD、或 Google Workspace 的目錄。\u003c/li>\u003cli>盤點平台對外暴露的每一個 LLM 函式和工具，按資料類別、動作類型、目的地分別控管。「對正式環境跑 SQL」的萬用工具、和可以讓攻擊者自選外送網址的大量匯出 API，一律停用。\u003c/li>\u003cli>在前端 build 的上線關卡加上密碼掃描；把自主紅隊評估接進上線關卡和部署偏移檢查（比對正式環境實際狀態是否偏離核准的基線）。Bain 這組密碼在正式環境躺到連被動掃描都撿得到；而 Bain 過去的傳統 pentest 沒抓到這類問題。\u003c/li>\u003c/ul>",
+    "conclusion": "\u003cp>Bain Pyxis 是這系列 AI 平台攻擊案例，自麥肯錫之後的第二件。真正的核心資產不是模型本身，而是模型背後跑的那個身分。密碼寫死在前端、服務帳號權限過大、AI 平台綁著公司 IdP 的寫入權——這些都不是 AI 特有的 bug，全是一般的 web / infra 問題；但在 AI 平台的語境下，它會影響到的範圍包含跨客戶對話紀錄、競爭情報 schema、系統提示詞本身、還有企業的身分目錄。AIDEFEND 在 IAM、工具授權、多租戶隔離、系統提示詞強化這幾塊都有對應技術；營運上的重點是：AI 平台的服務帳號，就應該用對待正式環境資料庫管理員同等的標準去切分權限、做稽核、做監控——因為它從被打進前端 bundle 的那一刻起，就等於是那個身分。\u003c/p>"
+  },
+  "defensesCount": 4,
+  "gapsCount": 2,
+  "publishOrder": 4
+}
+  </script>
+
+  <script src="../../js/purify.min.js"></script>
+  <script src="../../js/i18n.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/brief-page.js"></script>
+</body>
+</html>

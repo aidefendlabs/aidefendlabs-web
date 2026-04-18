@@ -1,0 +1,110 @@
+{
+  "slug": "mckinsey-lilli-ai-platform-compromise",
+  "date": "2026-04-17",
+  "source": {
+    "title": "How We Hacked McKinsey's AI Platform",
+    "url": "https://codewall.ai/blog/how-we-hacked-mckinseys-ai-platform",
+    "type": "blog",
+    "author": "Paul Price (CodeWall)",
+    "authoredAt": "2026-03-09"
+  },
+  "tags": [
+    "Agentic AI",
+    "Prompt Integrity",
+    "Data Exfiltration",
+    "Enterprise AI"
+  ],
+  "en": {
+    "title": "McKinsey Lilli Compromise: When SQL Injection Reaches the AI Prompt Layer",
+    "summary": "CodeWall chained 22 unauthenticated endpoints with a JSON-key SQL injection in McKinsey's Lilli AI platform to get full read/write on 46.5M chat messages, 728K files, 3.68M RAG chunks, and the system prompts steering 43,000+ users.\n\nLesson: prompt storage, RAG chunks, and vector stores are crown-jewel assets and need integrity controls on the level of code and secrets.",
+    "threatAnalysis": "<ul><li><strong>The wedge was classic.</strong> 22 Lilli API endpoints lacked authentication; one echoed JSON request keys straight into SQL. An autonomous agent chained error-based SQLi with IDOR and read the whole production database in about 2 hours.</li><li><strong>Everything exposed was AI crown jewel.</strong> 46.5M chat messages, 728K files, 3.68M RAG chunks with S3 paths, 266K OpenAI vector stores, 384K AI assistants, 95 system prompts across 12 models, and 57K user accounts — all in one queryable database.</li><li><strong>Write access to prompts is the silent kill.</strong> The same SQLi allowed UPDATE — an attacker could rewrite any system prompt (poisoned advice, guardrail removal, exfil instructions) with one HTTP call. No deploy, no code change, no audit trail.</li><li><strong>Detection failure.</strong> Lilli ran in production two years with 43K+ users and 500K+ monthly prompts. Human scanning missed the flaw; the autonomous agent found it in hours.</li><li><strong>Disclosure.</strong> CodeWall reported to McKinsey's CISO on 1 Mar 2026; patches and endpoint closure on 2 Mar; public disclosure 9 Mar.</li></ul>",
+    "defenses": [
+      {
+        "id": "AID-H-022.002",
+        "name": "Runtime Integrity Enforcement (Signed Configurations)",
+        "relevance": "Prompts stored in a plaintext database are exactly the attack surface CodeWall exploited. Signed-configuration enforcement — system prompts carrying cryptographic signatures verified at load time — prevents the 'single UPDATE statement' silent rewrite. Even if the DB is compromised, tampered prompts fail verification and do not load.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-021.001",
+        "name": "Chunk-Level Integrity Signing",
+        "relevance": "3.68 million RAG chunks with S3 paths were exposed and — through the same SQLi — modifiable. Chunk-level signing means every retrieved chunk is verified at retrieval time; a tampered chunk is rejected before it reaches the model. Without this, any DB read/write bug becomes a RAG poisoning vector.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-D-004.005",
+        "name": "Runtime Prompt Integrity Verification",
+        "relevance": "This is the exact failure mode: the model loaded system prompts straight from the DB with no runtime check that they matched the last approved version. Hashing and signing approved prompts and re-verifying at every request catches any DB-side tamper before the prompt reaches inference, even when audit logs fail.",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-030.002",
+        "name": "Lifecycle-Stage Authorization Gate",
+        "relevance": "The architectural problem was that chat history, RAG chunks, system prompts, user accounts, and vector store metadata all lived in one queryable database. Enforcing an authorization gate per lifecycle stage — separate credentials and access paths for each asset class — would have limited a single SQLi to one class instead of all of them.",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "Blast-radius isolation between AI asset classes",
+        "description": "Beyond the techniques mapped above, teams running large AI platforms should also consider physical or logical isolation between storage layers — prompts in one store, RAG chunks in another, chat history in a third — so a single database compromise cannot cascade into total AI platform compromise the way it did here.",
+        "suggestion": "Separate AI-asset stores by class (prompts / RAG / chat history / user identity / vector metadata) into distinct databases or schemas with distinct credentials and network paths, so lateral movement requires multiple independent failures rather than one SQLi."
+      },
+      {
+        "area": "Autonomous offensive testing as a routine operational control",
+        "description": "CodeWall's autonomous agent found this chain in about 2 hours; human scanning had missed it for 2 years. Defenders running AI platforms can additionally layer in continuous machine-speed red-team assessment that tests authentication coverage, SQLi, and AI-asset-layer tamper paths on every release.",
+        "suggestion": "Wire an autonomous testing agent into release gates and production drift checks — not as a replacement for traditional AppSec, but as a second layer that keeps up with the rate at which endpoints and AI assets are added to the platform."
+      }
+    ],
+    "whatDefendersShouldDoNow": "<ul><li>Inventory every place your AI platform stores prompts, RAG chunks, vector store metadata, and agent configurations. Move them behind integrity-signed storage and verify at load or retrieval time.</li><li>Assume a single SQLi or IDOR could hit the prompt table. Add DB-level audit logs and real-time alerts on UPDATE to prompt, config, or RAG tables — treat any such write outside deployment pipelines as a security incident.</li><li>Run a default-deny audit of every API endpoint on your AI platform. Lilli had 22 unauthenticated endpoints across 200+; the real number in your stack is likely non-zero too.</li><li>Separate AI-asset storage by class (prompts / RAG / chat history / identity / vector metadata) into distinct stores with distinct credentials, so one bug cannot compromise all layers at once.</li><li>Add autonomous red-team assessment as a routine control. Human scanning alone missed this for 2 years of production use.</li></ul>",
+    "conclusion": "<p>McKinsey Lilli is the most concrete case so far for treating the prompt layer as a crown-jewel asset. The wedge was a classic web bug, but the damage surface was entirely AI-specific — prompts, RAG chunks, vector stores, agent state. AIDEFEND's configuration integrity, RAG chunk signing, and artifact tamper detection cover this exact problem; the operational lesson is that every AI platform team needs to assume their own 'one SQLi away from full compromise' scenario and harden the prompt and retrieval layers independently of the data layer underneath.</p>"
+  },
+  "zh-TW": {
+    "title": "McKinsey Lilli 平台被攻破：SQL Injection 打到 AI 的 prompt 層",
+    "summary": "CodeWall 發現麥肯錫顧問公司 (McKinsey) 內部的 AI 平台 Lilli 有 22 個 API 端點沒做驗證，其中一個 API 會把 JSON 請求裡的 key 直接串進 SQL—— CodeWall 的自主 agent 把缺少驗證和這個 SQL 注入漏洞串成一條攻擊鏈，兩小時內就讀寫到 4,650 萬筆對話、72.8 萬份檔案、368 萬筆 RAG chunk，還有操控 43,000 名員工 AI 行為的系統提示詞（system prompt）。\n\n對防禦方來說，重點是：提示詞儲存、RAG chunk、vector store 現在都是核心資產，必須用和保護程式碼、secrets 同等強度的手段去防。",
+    "threatAnalysis": "<ul><li><strong>攻擊切入點很典型。</strong> Lilli 有 22 個 API 端點沒做驗證，其中一個 API 會把 JSON 請求裡的 key 直接串進 SQL 查詢。CodeWall 的自主 agent 把 error-based SQLi 和 IDOR（橫向越權，換個 ID 就能讀到別人的資料）這兩種攻擊手段串起來，兩小時內就讀到整個正式環境的資料庫。</li><li><strong>曝光的全部是 AI 的核心資產。</strong> 4,650 萬筆對話（含策略、併購、客戶內容）、72.8 萬份檔案（PDF / Excel / PPT / Word）、368 萬筆 RAG chunk（包括他們的 S3 路徑）、26.6 萬個 OpenAI vector store、38.4 萬個 AI 助理、95 份系統提示詞（12 個模型）、5.7 萬個員工帳號——全都放在同一個可查詢的資料庫裡。</li><li><strong>允許寫入提示詞才是真正的致命點。</strong> 同一個 SQLi 允許 UPDATE，所以攻擊者用一個 HTTP 呼叫就能改掉任一個系統提示詞——投毒、移除 guardrail、或植入資料外洩指令。不用部署、不用改程式碼、沒有明顯的稽核軌跡。</li><li><strong>偵測徹底失效。</strong> Lilli 在正式環境跑了兩年，有 4.3 萬名使用者、每月 50 萬筆提示詞。人工弱點掃描沒抓到；自主 agent 幾小時就找到。</li><li><strong>揭露處理得宜。</strong> CodeWall 2026-03-01 通報 McKinsey 的 CISO；03-02 修補完成、所有未驗證端點關閉；03-09 公開揭露。</li></ul>",
+    "defenses": [
+      {
+        "id": "AID-H-022.002",
+        "name": "Runtime Integrity Enforcement (Signed Configurations)",
+        "relevance": "提示詞存在明文資料庫裡，這正是 CodeWall 利用的攻擊面。Signed-configuration 執行——系統提示詞帶密碼學簽章、載入時驗證簽章——能擋下「一個 UPDATE 就偷偷改掉」的情境。就算資料庫被攻破，被動過的提示詞通不過簽章驗證，就沒辦法進到模型裡。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-021.001",
+        "name": "Chunk-Level Integrity Signing",
+        "relevance": "除了 368 萬筆 RAG chunk（包括 S3 路徑）都被曝光之外，這次的攻擊還因為同一個 SQL 注入漏洞允許 UPDATE，導致這些 chunk 能被竄改。Chunk-level 簽章代表每次擷取 chunk 時都要驗證簽章，被動過的 chunk 會在進模型前就被擋下。沒有這一層，任何讀寫資料庫的 bug 都會變成 RAG 投毒管道。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-D-004.005",
+        "name": "Runtime Prompt Integrity Verification",
+        "relevance": "這次的失效點就在這裡：模型直接從資料庫載入系統提示詞，完全沒檢查它跟上次核准過的版本是否一致。對核准過的提示詞做雜湊和簽章、每次請求都驗一次，就算資料庫的稽核紀錄失效，只要提示詞被動過手腳，在送進推論（inference）前就會被擋下來。",
+        "effectiveness": "high"
+      },
+      {
+        "id": "AID-H-030.002",
+        "name": "Lifecycle-Stage Authorization Gate",
+        "relevance": "架構上的根本問題是：對話紀錄、RAG chunk、系統提示詞、使用者帳號、vector store metadata 全都擠在同一個可查詢的資料庫裡。依 AI 生命週期階段對每個資產類別設授權關卡——不同憑證、不同存取路徑——就能把一個 SQLi 的影響限縮在單一類別，而不是一次全部淪陷。",
+        "effectiveness": "medium"
+      }
+    ],
+    "gaps": [
+      {
+        "area": "AI 資產類別之間的爆炸半徑隔離",
+        "description": "除了上面對應的技術，跑大型 AI 平台的團隊還應該考慮對各個儲存層做實體或邏輯隔離——提示詞放一個 store、RAG chunk 放另一個、對話紀錄放第三個——這樣單一資料庫被攻破，才不會像這次一樣直接變成整個 AI 平台全面淪陷。",
+        "suggestion": "把 AI 資產儲存按類別分開（提示詞 / RAG / 對話紀錄 / 使用者身分 / vector metadata）放到不同的資料庫或 schema，用不同的憑證和網路路徑管；要橫向移動就得突破好幾道獨立的防線，不是一次 SQLi 吃掉全部。"
+      },
+      {
+        "area": "自主攻擊測試納入常規控制",
+        "description": "CodeWall 的自主 agent 兩小時就串出整條攻擊鏈，人工掃描兩年都沒抓到。跑 AI 平台的防禦方可以再加一層：用機器速度持續做紅隊評估，測驗證覆蓋率、SQLi、還有 AI 資產層的竄改路徑，每次 release 都跑一次。",
+        "suggestion": "把自主測試 agent 接進上線關卡和正式環境的偏移檢查——不是要取代傳統 AppSec，而是當成第二層防護，跟上平台新增端點和 AI 資產的速度。"
+      }
+    ],
+    "whatDefendersShouldDoNow": "<ul><li>盤點 AI 平台上儲存提示詞、RAG chunk、vector store metadata、agent 設定的所有位置。把它們移到帶完整性簽章的儲存層，並在載入或擷取時驗證簽章。</li><li>我們要預先假設，單一個 SQLi 或 IDOR 就能影響到提示詞表。對提示詞、設定、RAG 表加上資料庫層稽核紀錄和即時警示——任何部署 pipeline 以外的 UPDATE，都視為資安事件。</li><li>對 AI 平台上每個 API 端點做一次 default-deny 稽核。Lilli 200 多個端點裡有 22 個沒驗證；你自己的環境裡大概也有類似的空窗。</li><li>把 AI 資產儲存按類別分開（提示詞 / RAG / 對話紀錄 / 身分 / vector metadata）放到不同 store、用不同憑證；一個 bug 就沒辦法一次打穿所有層。</li><li>把自主紅隊評估當成常規控制。人工掃描兩年漏掉這件事，機器速度的持續檢測是必要的補強。</li></ul>",
+    "conclusion": "<p>McKinsey Lilli 是目前最具體的一個案例，說明為什麼提示詞層必須當核心資產在管。入口是經典的 web bug，但傷害面全部是 AI 特有的——提示詞、RAG chunk、vector store、agent 狀態。AIDEFEND 的設定完整性、RAG chunk 簽章、artifact 竄改偵測，剛好對應這個問題；營運上的重點是：每個跑 AI 平台的團隊都要假設自己「離一個 SQLi 只差一步」，把提示詞和擷取層獨立於底層資料層去強化。</p>"
+  },
+  "defensesCount": 4,
+  "gapsCount": 2,
+  "publishOrder": 3
+}
